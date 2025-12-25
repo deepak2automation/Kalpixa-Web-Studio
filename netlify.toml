@@ -1,3 +1,4 @@
+
 # SPA fallback: allow refresh / direct open on /services, /contact, etc.
 [[redirects]]
   from = "/*"
