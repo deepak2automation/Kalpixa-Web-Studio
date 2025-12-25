@@ -3,21 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kalpixa Web Studio | Digital Transformation</title>
+    <title>Kalpixa Web Studio | Web Design & SEO</title>
+    <meta name="description" content="Premium Digital Agency providing Web Design, SEO, and Hosting for local businesses. Restaurants, Salons, and Clinics specialized.">
+    <link rel="canonical" href="https://kalpixa.com/" />
     
-    <!-- SEO & Performance -->
-    <meta name="description" content="Premium Digital Agency providing Web Design, SEO, and Hosting for local businesses.">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://kalpixa.com/" />
+    <meta property="og:title" content="Kalpixa Web Studio | Digital Transformation" />
+    <meta property="og:description" content="We build stunning, high-performance websites that bring you customers. Web Design, SEO, and Hosting." />
+    <meta property="og:image" content="https://kalpixa.com/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://kalpixa.com/" />
+    <meta property="twitter:title" content="Kalpixa Web Studio | Digital Transformation" />
+    <meta property="twitter:description" content="We build stunning, high-performance websites that bring you customers." />
+    <meta property="twitter:image" content="https://kalpixa.com/og-image.jpg" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Google Analytics 4 (Placeholder - Replace G-XXXXXXXXXX with your actual ID) -->
+    <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX');
+      gtag('config', 'G-XXXXXXXXXX', { 'anonymize_ip': true });
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -41,27 +55,27 @@
         }
       }
     </script>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "recharts": "https://esm.sh/recharts@^3.6.0",
-    "vite": "https://esm.sh/vite@^7.3.0",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "react-helmet-async": "https://esm.sh/react-helmet-async@^2.0.5"
-  }
-}
-</script>
+    <script type="importmap">
+    {
+      "imports": {
+        "react/": "https://esm.sh/react@^18.2.0/",
+        "react": "https://esm.sh/react@^18.2.0",
+        "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^4.2.1",
+        "react-dom/": "https://esm.sh/react-dom@^18.2.0/",
+        "react-dom": "https://esm.sh/react-dom@^18.2.0",
+        "recharts": "https://esm.sh/recharts@^2.12.2",
+        "vite": "https://esm.sh/vite@^5.1.6",
+        "lucide-react": "https://esm.sh/lucide-react@^0.344.0",
+        "react-helmet-async": "https://esm.sh/react-helmet-async@^2.0.4"
+      }
+    }
+    </script>
 <link rel="stylesheet" href="/index.css">
 </head>
   <body class="bg-slate-50 text-slate-900 font-sans antialiased">
     <!-- 
       Netlify Form Detection 
       This hidden form allows Netlify to detect fields during the build process.
-      The actual submission happens via React (AJAX).
     -->
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
       <input type="text" name="name" />
@@ -69,6 +83,7 @@
       <input type="tel" name="phone" />
       <select name="service"></select>
       <textarea name="message"></textarea>
+      <input type="hidden" name="form-name" value="contact" />
     </form>
 
     <div id="root"></div>

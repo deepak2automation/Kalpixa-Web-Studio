@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.kalpixa.com/</loc>
+    <loc>https://kalpixa.com/</loc>
     <lastmod>2024-05-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.kalpixa.com/services</loc>
+    <loc>https://kalpixa.com/services</loc>
     <lastmod>2024-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.kalpixa.com/seo-tools</loc>
+    <loc>https://kalpixa.com/seo-tools</loc>
     <lastmod>2024-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.kalpixa.com/contact</loc>
+    <loc>https://kalpixa.com/contact</loc>
     <lastmod>2024-05-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>

@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { HelmetProvider } from 'react-helmet-async';
 import Layout from './components/Layout';
 import SeoAnalyzer from './components/SeoAnalyzer';
+import SeoHead from './components/SeoHead';
 import { SERVICES, CONTACT_EMAIL, PHONE_NUMBER } from './constants';
-import { ArrowRight, CheckCircle, Code, Star } from 'lucide-react';
+import { ArrowRight, CheckCircle, Code, Star, Loader2 } from 'lucide-react';
 
 const App: React.FC = () => {
-  // Simple router simulation for SPA without heavy router deps in this context
-  const [currentPath, setCurrentPath] = useState('/');
+  // SEO Upgrade: Use History API (clean URLs) instead of Hash
+  const [currentPath, setCurrentPath] = useState(window.location.pathname === '/index.html' || window.location.pathname === '' ? '/' : window.location.pathname);
 
   useEffect(() => {
-    // Handle browser back button
-    const onPopState = () => setCurrentPath(window.location.hash.replace('#', '') || '/');
+    const onPopState = () => setCurrentPath(window.location.pathname);
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
   const navigate = (path: string) => {
-    window.location.hash = path;
+    window.history.pushState({}, '', path);
     setCurrentPath(path);
     window.scrollTo(0, 0);
   };
@@ -25,6 +26,11 @@ const App: React.FC = () => {
 
   const Home = () => (
     <>
+      <SeoHead 
+        title="Digital Transformation Agency" 
+        description="Kalpixa Web Studio builds high-performance websites, SEO strategies, and mobile apps for local businesses. Get a free quote today."
+        path="/"
+      />
       {/* Hero Section */}
       <section className="relative bg-primary overflow-hidden">
         {/* Abstract Background Mesh */}
@@ -107,6 +113,11 @@ const App: React.FC = () => {
 
   const ServicesPage = () => (
     <div className="py-20 bg-slate-50">
+      <SeoHead 
+        title="Web Design & SEO Services" 
+        description="From custom web design to advanced SEO and mobile apps. See our affordable pricing packages for local business growth."
+        path="/services"
+      />
        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-serif font-bold text-primary mb-12 text-center">Our Services</h1>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -128,54 +139,136 @@ const App: React.FC = () => {
     </div>
   );
 
-  const ContactPage = () => (
-    <div className="py-20 bg-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-serif font-bold text-primary mb-4">Start Your Project</h1>
-          <p className="text-lg text-slate-600">Fill out the form below or reach us directly.</p>
-        </div>
+  const ContactPage = () => {
+    const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
-        <div className="grid md:grid-cols-2 gap-12">
-          {/* Info */}
-          <div className="bg-slate-50 p-8 rounded-2xl">
-            <h3 className="font-bold text-xl mb-6">Contact Information</h3>
-            <div className="space-y-6">
-              <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Phone</label>
-                <p className="text-lg font-medium">{PHONE_NUMBER}</p>
-              </div>
-              <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Email</label>
-                <p className="text-lg font-medium">{CONTACT_EMAIL}</p>
-              </div>
-              <div>
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Office Hours</label>
-                <p className="text-lg font-medium">Mon - Sat: 10:00 AM - 7:00 PM</p>
-              </div>
-            </div>
+    // Netlify Form Submission
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setStatus('submitting');
+      
+      const form = e.currentTarget;
+      const formData = new FormData(form);
+
+      try {
+        await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData as any).toString(),
+        });
+        setStatus('success');
+        navigate('/thank-you');
+      } catch (error) {
+        console.error("Form submission error:", error);
+        setStatus('error');
+      }
+    };
+
+    return (
+      <div className="py-20 bg-white">
+        <SeoHead 
+          title="Contact Us" 
+          description="Ready to start your project? Contact Kalpixa Web Studio for a free consultation and quote."
+          path="/contact"
+        />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h1 className="text-4xl font-serif font-bold text-primary mb-4">Start Your Project</h1>
+            <p className="text-lg text-slate-600">Fill out the form below or reach us directly.</p>
           </div>
 
-          {/* Form */}
-          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert("Thank you! Deepak will contact you shortly."); }}>
-            <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="Name" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" required />
-              <input type="tel" placeholder="Phone" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" required />
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Info */}
+            <div className="bg-slate-50 p-8 rounded-2xl">
+              <h3 className="font-bold text-xl mb-6">Contact Information</h3>
+              <div className="space-y-6">
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Phone</label>
+                  <p className="text-lg font-medium">{PHONE_NUMBER}</p>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Email</label>
+                  <p className="text-lg font-medium">{CONTACT_EMAIL}</p>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wide">Office Hours</label>
+                  <p className="text-lg font-medium">Mon - Sat: 10:00 AM - 7:00 PM</p>
+                </div>
+              </div>
             </div>
-            <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" required />
-            <select className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none">
-              <option>I need a Website</option>
-              <option>I need SEO</option>
-              <option>I need E-Commerce</option>
-              <option>Other</option>
-            </select>
-            <textarea placeholder="Tell us about your project..." rows={4} className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none"></textarea>
-            <button type="submit" className="w-full bg-primary text-white font-bold py-4 rounded-lg hover:bg-slate-800 transition-colors">
-              Send Request
-            </button>
-          </form>
+
+            {/* Netlify Form */}
+            <form 
+              className="space-y-4" 
+              name="contact" 
+              method="post" 
+              onSubmit={handleSubmit}
+            >
+              {/* Mandatory Hidden Inputs for Netlify */}
+              <input type="hidden" name="form-name" value="contact" />
+              <div hidden>
+                <label>
+                  Don’t fill this out if you’re human: <input name="bot-field" />
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <input type="text" name="name" placeholder="Name" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" required />
+                <input type="tel" name="phone" placeholder="Phone" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" />
+              </div>
+              <input type="email" name="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" required />
+              <select name="service" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none">
+                <option value="Website">I need a Website</option>
+                <option value="SEO">I need SEO</option>
+                <option value="Ecommerce">I need E-Commerce</option>
+                <option value="Other">Other</option>
+              </select>
+              <textarea name="message" placeholder="Tell us about your project..." rows={4} className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" required></textarea>
+              <button 
+                type="submit" 
+                disabled={status === 'submitting'}
+                className="w-full bg-primary text-white font-bold py-4 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
+              >
+                {status === 'submitting' ? (
+                  <>
+                    <Loader2 className="animate-spin" /> Sending...
+                  </>
+                ) : (
+                  'Send Request'
+                )}
+              </button>
+              {status === 'error' && (
+                <p className="text-red-500 text-center text-sm">Something went wrong. Please try again or call us directly.</p>
+              )}
+            </form>
+          </div>
         </div>
       </div>
+    );
+  }
+
+  const ThankYouPage = () => (
+    <div className="py-24 bg-white text-center">
+       <SeoHead 
+          title="Thank You" 
+          description="Thank you for contacting Kalpixa Web Studio."
+          path="/thank-you"
+        />
+       <div className="max-w-2xl mx-auto px-4">
+         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-10 h-10 text-green-600" />
+         </div>
+         <h1 className="text-4xl font-serif font-bold text-primary mb-4">Message Received!</h1>
+         <p className="text-lg text-slate-600 mb-8">
+           Thank you for reaching out. We will review your requirements and get back to you within 24 hours.
+         </p>
+         <button 
+            onClick={() => navigate('/')}
+            className="bg-primary text-white px-8 py-3 rounded-full font-bold hover:bg-slate-800 transition-colors"
+          >
+            Back to Home
+          </button>
+       </div>
     </div>
   );
 
@@ -183,16 +276,29 @@ const App: React.FC = () => {
     switch (currentPath) {
       case '/': return <Home />;
       case '/services': return <ServicesPage />;
-      case '/seo-tools': return <SeoAnalyzer />;
+      case '/seo-tools': 
+        return (
+          <>
+            <SeoHead 
+              title="Free SEO Analyzer Tool" 
+              description="Analyze your website SEO score instantly. Identify technical issues, speed problems, and meta tag errors."
+              path="/seo-tools"
+            />
+            <SeoAnalyzer />
+          </>
+        );
       case '/contact': return <ContactPage />;
+      case '/thank-you': return <ThankYouPage />;
       default: return <Home />;
     }
   };
 
   return (
-    <Layout activePath={currentPath} onNavigate={navigate}>
-      {renderContent()}
-    </Layout>
+    <HelmetProvider>
+      <Layout activePath={currentPath} onNavigate={navigate}>
+        {renderContent()}
+      </Layout>
+    </HelmetProvider>
   );
 };
 
