@@ -202,6 +202,8 @@ const App: React.FC = () => {
               className="space-y-4" 
               name="contact" 
               method="post" 
+              data-netlify="true"
+              data-netlify-honeypot="bot-field"
               onSubmit={handleSubmit}
             >
               {/* Mandatory Hidden Inputs for Netlify */}
