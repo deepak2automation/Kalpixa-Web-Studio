@@ -3,37 +3,66 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary SEO -->
     <title>Kalpixa Web Studio | Web Design & SEO</title>
-    <meta name="description" content="Premium Digital Agency providing Web Design, SEO, and Hosting for local businesses. Restaurants, Salons, and Clinics specialized.">
+    <meta
+      name="description"
+      content="Premium Digital Agency providing Web Design, SEO, and Hosting for local businesses. Restaurants, Salons, and Clinics specialized."
+    />
     <link rel="canonical" href="https://kalpixa.com/" />
-    
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0f172a" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Kalpixa Web Studio" />
     <meta property="og:url" content="https://kalpixa.com/" />
     <meta property="og:title" content="Kalpixa Web Studio | Digital Transformation" />
-    <meta property="og:description" content="We build stunning, high-performance websites that bring you customers. Web Design, SEO, and Hosting." />
+    <meta
+      property="og:description"
+      content="We build stunning, high-performance websites that bring you customers. Web Design, SEO, and Hosting."
+    />
     <meta property="og:image" content="https://kalpixa.com/og-image.jpg" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://kalpixa.com/" />
     <meta property="twitter:title" content="Kalpixa Web Studio | Digital Transformation" />
-    <meta property="twitter:description" content="We build stunning, high-performance websites that bring you customers." />
+    <meta
+      property="twitter:description"
+      content="We build stunning, high-performance websites that bring you customers."
+    />
     <meta property="twitter:image" content="https://kalpixa.com/og-image.jpg" />
+    <meta property="twitter:site" content="@kalpixa" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-    
+    <!-- Performance: Fonts -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Preload the stylesheet to reduce render delay (safe) -->
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EXZQVCT7BQ"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-EXZQVCT7BQ', { 'anonymize_ip': true });
+      gtag('config', 'G-EXZQVCT7BQ', { anonymize_ip: true, send_page_view: true });
     </script>
 
+    <!-- Tailwind CDN (keep as-is to avoid breaking your styling) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -55,6 +84,8 @@
         }
       }
     </script>
+
+    <!-- Import map (keep as-is for your current setup) -->
     <script type="importmap">
     {
       "imports": {
@@ -70,20 +101,30 @@
       }
     }
     </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
+
   <body class="bg-slate-50 text-slate-900 font-sans antialiased">
-    <!-- 
-      Netlify Form Detection 
+    <!--
+      Netlify Form Detection
       This hidden form allows Netlify to detect fields during the build process.
     -->
-    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+    <form
+      name="contact"
+      method="POST"
+      data-netlify="true"
+      data-netlify-honeypot="bot-field"
+      hidden
+    >
+      <input type="hidden" name="form-name" value="contact" />
+      <p hidden>
+        <label>Don’t fill this out: <input name="bot-field" /></label>
+      </p>
       <input type="text" name="name" />
       <input type="email" name="email" />
       <input type="tel" name="phone" />
       <select name="service"></select>
       <textarea name="message"></textarea>
-      <input type="hidden" name="form-name" value="contact" />
     </form>
 
     <div id="root"></div>

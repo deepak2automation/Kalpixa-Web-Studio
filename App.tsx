@@ -6,12 +6,25 @@ import SeoHead from './components/SeoHead';
 import { SERVICES, CONTACT_EMAIL, PHONE_NUMBER } from './constants';
 import { ArrowRight, CheckCircle, Code, Star, Loader2 } from 'lucide-react';
 
+type FormStatus = 'idle' | 'submitting' | 'success' | 'error';
+
+// Robust URL-encoding helper for Netlify Forms
+const encode = (data: Record<string, string>) =>
+  Object.keys(data)
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
+    .join('&');
+
 const App: React.FC = () => {
   // SEO Upgrade: Use History API (clean URLs) instead of Hash
-  const [currentPath, setCurrentPath] = useState(window.location.pathname === '/index.html' || window.location.pathname === '' ? '/' : window.location.pathname);
+  const normalizePath = (p: string) => {
+    if (!p || p === '' || p === '/index.html') return '/';
+    return p;
+  };
+
+  const [currentPath, setCurrentPath] = useState<string>(normalizePath(window.location.pathname));
 
   useEffect(() => {
-    const onPopState = () => setCurrentPath(window.location.pathname);
+    const onPopState = () => setCurrentPath(normalizePath(window.location.pathname));
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
@@ -26,8 +39,8 @@ const App: React.FC = () => {
 
   const Home = () => (
     <>
-      <SeoHead 
-        title="Digital Transformation Agency" 
+      <SeoHead
+        title="Digital Transformation Agency"
         description="Kalpixa Web Studio builds high-performance websites, SEO strategies, and mobile apps for local businesses. Get a free quote today."
         path="/"
       />
@@ -35,11 +48,11 @@ const App: React.FC = () => {
       <section className="relative bg-primary overflow-hidden">
         {/* Abstract Background Mesh */}
         <div className="absolute inset-0 opacity-20">
-             <div className="absolute top-0 -left-4 w-72 h-72 bg-accent rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
-             <div className="absolute top-0 -right-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
-             <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+          <div className="absolute top-0 -left-4 w-72 h-72 bg-accent rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+          <div className="absolute top-0 -right-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
         </div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 flex flex-col items-center text-center">
           <h1 className="text-4xl md:text-6xl font-serif font-bold text-white tracking-tight mb-6">
             Transforming Local Business <br />
@@ -51,15 +64,15 @@ const App: React.FC = () => {
             We build stunning, high-performance websites that don't just look good—they bring you customers. Web Design, SEO, and Hosting, all in one place.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <button 
+            <button
               onClick={() => navigate('/seo-tools')}
               className="bg-accent text-primary px-8 py-4 rounded-lg font-bold text-lg hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2"
             >
               Free SEO Audit <ArrowRight size={20} />
             </button>
-            <button 
-               onClick={() => navigate('/services')}
-               className="px-8 py-4 rounded-lg font-bold text-lg text-white border border-slate-600 hover:bg-white/5 transition-all"
+            <button
+              onClick={() => navigate('/services')}
+              className="px-8 py-4 rounded-lg font-bold text-lg text-white border border-slate-600 hover:bg-white/5 transition-all"
             >
               View Services
             </button>
@@ -70,10 +83,9 @@ const App: React.FC = () => {
       {/* Trust Badges */}
       <div className="bg-slate-900 border-b border-slate-800 py-8">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-center gap-8 md:gap-16 opacity-60 grayscale hover:grayscale-0 transition-all">
-           {/* Mock Logos for "Trust" */}
-           <span className="text-white font-bold text-xl flex items-center gap-2"><Code /> Next.js Expert</span>
-           <span className="text-white font-bold text-xl flex items-center gap-2"><Star /> Google Partner</span>
-           <span className="text-white font-bold text-xl flex items-center gap-2"><CheckCircle /> 99.9% Uptime</span>
+          <span className="text-white font-bold text-xl flex items-center gap-2"><Code /> Next.js Expert</span>
+          <span className="text-white font-bold text-xl flex items-center gap-2"><Star /> Google Partner</span>
+          <span className="text-white font-bold text-xl flex items-center gap-2"><CheckCircle /> 99.9% Uptime</span>
         </div>
       </div>
 
@@ -84,10 +96,13 @@ const App: React.FC = () => {
             <h2 className="text-primary font-serif text-3xl md:text-4xl font-bold mb-4">Everything You Need To Grow</h2>
             <div className="h-1 w-20 bg-accent mx-auto rounded"></div>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {SERVICES.slice(0, 3).map((service) => (
-              <div key={service.id} className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-xl transition-all group hover:-translate-y-1 cursor-pointer">
+              <div
+                key={service.id}
+                className="p-8 rounded-2xl bg-slate-50 border border-slate-100 hover:shadow-xl transition-all group hover:-translate-y-1 cursor-pointer"
+              >
                 <div className="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 group-hover:bg-accent group-hover:text-primary transition-colors text-accent">
                   <service.icon size={28} />
                 </div>
@@ -97,9 +112,9 @@ const App: React.FC = () => {
               </div>
             ))}
           </div>
-          
+
           <div className="text-center mt-12">
-            <button 
+            <button
               onClick={() => navigate('/services')}
               className="text-primary font-bold border-b-2 border-accent pb-1 hover:text-accent transition-colors"
             >
@@ -113,61 +128,84 @@ const App: React.FC = () => {
 
   const ServicesPage = () => (
     <div className="py-20 bg-slate-50">
-      <SeoHead 
-        title="Web Design & SEO Services" 
+      <SeoHead
+        title="Web Design & SEO Services"
         description="From custom web design to advanced SEO and mobile apps. See our affordable pricing packages for local business growth."
         path="/services"
       />
-       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-serif font-bold text-primary mb-12 text-center">Our Services</h1>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {SERVICES.map((service) => (
-              <div key={service.id} className="p-8 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-lg transition-all">
-                <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mb-6 text-primary">
-                  <service.icon size={24} />
-                </div>
-                <h3 className="text-xl font-bold text-primary mb-3">{service.title}</h3>
-                <p className="text-slate-600 mb-6">{service.description}</p>
-                <div className="pt-6 border-t border-slate-100 flex justify-between items-center">
-                   <span className="text-sm font-bold text-slate-400">Starting at</span>
-                   <span className="font-bold text-accent">{service.price}</span>
-                </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl font-serif font-bold text-primary mb-12 text-center">Our Services</h1>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {SERVICES.map((service) => (
+            <div
+              key={service.id}
+              className="p-8 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-lg transition-all"
+            >
+              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mb-6 text-primary">
+                <service.icon size={24} />
               </div>
-            ))}
-          </div>
-       </div>
+              <h3 className="text-xl font-bold text-primary mb-3">{service.title}</h3>
+              <p className="text-slate-600 mb-6">{service.description}</p>
+              <div className="pt-6 border-t border-slate-100 flex justify-between items-center">
+                <span className="text-sm font-bold text-slate-400">Starting at</span>
+                <span className="font-bold text-accent">{service.price}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
   const ContactPage = () => {
-    const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+    const [status, setStatus] = useState<FormStatus>('idle');
 
-    // Netlify Form Submission
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setStatus('submitting');
-      
+
       const form = e.currentTarget;
       const formData = new FormData(form);
 
+      // Convert FormData to a plain object to guarantee encoding
+      const payload: Record<string, string> = {};
+      formData.forEach((value, key) => {
+        payload[key] = String(value);
+      });
+
+      // Hard requirement: ensure form-name is present in the payload
+      payload['form-name'] = 'contact';
+
       try {
-        await fetch('/', {
+        const res = await fetch('/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams(formData as any).toString(),
+          body: encode(payload),
         });
+
+        if (!res.ok) throw new Error(`Form POST failed: ${res.status}`);
+
         setStatus('success');
+
+        // Optional: Fire a conversion event if GA4 is installed
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const w = window as any;
+        if (typeof w.gtag === 'function') {
+          w.gtag('event', 'generate_lead', { method: 'Netlify Form' });
+        }
+
+        form.reset();
         navigate('/thank-you');
       } catch (error) {
-        console.error("Form submission error:", error);
+        console.error('Form submission error:', error);
         setStatus('error');
       }
     };
 
     return (
       <div className="py-20 bg-white">
-        <SeoHead 
-          title="Contact Us" 
+        <SeoHead
+          title="Contact Us"
           description="Ready to start your project? Contact Kalpixa Web Studio for a free consultation and quote."
           path="/contact"
         />
@@ -198,36 +236,69 @@ const App: React.FC = () => {
             </div>
 
             {/* Netlify Form */}
-            <form 
-              className="space-y-4" 
-              name="contact" 
-              method="post" 
+            <form
+              className="space-y-4"
+              name="contact"
+              method="POST"
               data-netlify="true"
               data-netlify-honeypot="bot-field"
               onSubmit={handleSubmit}
             >
               {/* Mandatory Hidden Inputs for Netlify */}
               <input type="hidden" name="form-name" value="contact" />
-              <div hidden>
+
+              {/* Honeypot */}
+              <p className="hidden">
                 <label>
                   Don’t fill this out if you’re human: <input name="bot-field" />
                 </label>
-              </div>
+              </p>
 
               <div className="grid grid-cols-2 gap-4">
-                <input type="text" name="name" placeholder="Name" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" required />
-                <input type="tel" name="phone" placeholder="Phone" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" />
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none"
+                  required
+                />
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Phone"
+                  className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none"
+                />
               </div>
-              <input type="email" name="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" required />
-              <select name="service" className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none">
+
+              <input
+                type="email"
+                name="email"
+                placeholder="Email Address"
+                className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none"
+                required
+              />
+
+              <select
+                name="service"
+                className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none"
+                defaultValue="Website"
+              >
                 <option value="Website">I need a Website</option>
                 <option value="SEO">I need SEO</option>
                 <option value="Ecommerce">I need E-Commerce</option>
                 <option value="Other">Other</option>
               </select>
-              <textarea name="message" placeholder="Tell us about your project..." rows={4} className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none" required></textarea>
-              <button 
-                type="submit" 
+
+              <textarea
+                name="message"
+                placeholder="Tell us about your project..."
+                rows={4}
+                className="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-accent outline-none"
+                required
+              />
+
+              <button
+                type="submit"
                 disabled={status === 'submitting'}
                 className="w-full bg-primary text-white font-bold py-4 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
               >
@@ -239,59 +310,67 @@ const App: React.FC = () => {
                   'Send Request'
                 )}
               </button>
+
               {status === 'error' && (
-                <p className="text-red-500 text-center text-sm">Something went wrong. Please try again or call us directly.</p>
+                <p className="text-red-500 text-center text-sm">
+                  Something went wrong. Please try again or call us directly.
+                </p>
               )}
             </form>
           </div>
         </div>
       </div>
     );
-  }
+  };
 
   const ThankYouPage = () => (
     <div className="py-24 bg-white text-center">
-       <SeoHead 
-          title="Thank You" 
-          description="Thank you for contacting Kalpixa Web Studio."
-          path="/thank-you"
-        />
-       <div className="max-w-2xl mx-auto px-4">
-         <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-green-600" />
-         </div>
-         <h1 className="text-4xl font-serif font-bold text-primary mb-4">Message Received!</h1>
-         <p className="text-lg text-slate-600 mb-8">
-           Thank you for reaching out. We will review your requirements and get back to you within 24 hours.
-         </p>
-         <button 
-            onClick={() => navigate('/')}
-            className="bg-primary text-white px-8 py-3 rounded-full font-bold hover:bg-slate-800 transition-colors"
-          >
-            Back to Home
-          </button>
-       </div>
+      <SeoHead
+        title="Thank You"
+        description="Thank you for contacting Kalpixa Web Studio."
+        path="/thank-you"
+      />
+      <div className="max-w-2xl mx-auto px-4">
+        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle className="w-10 h-10 text-green-600" />
+        </div>
+        <h1 className="text-4xl font-serif font-bold text-primary mb-4">Message Received!</h1>
+        <p className="text-lg text-slate-600 mb-8">
+          Thank you for reaching out. We will review your requirements and get back to you within 24 hours.
+        </p>
+        <button
+          onClick={() => navigate('/')}
+          className="bg-primary text-white px-8 py-3 rounded-full font-bold hover:bg-slate-800 transition-colors"
+        >
+          Back to Home
+        </button>
+      </div>
     </div>
   );
 
   const renderContent = () => {
     switch (currentPath) {
-      case '/': return <Home />;
-      case '/services': return <ServicesPage />;
-      case '/seo-tools': 
+      case '/':
+        return <Home />;
+      case '/services':
+        return <ServicesPage />;
+      case '/seo-tools':
         return (
           <>
-            <SeoHead 
-              title="Free SEO Analyzer Tool" 
+            <SeoHead
+              title="Free SEO Analyzer Tool"
               description="Analyze your website SEO score instantly. Identify technical issues, speed problems, and meta tag errors."
               path="/seo-tools"
             />
             <SeoAnalyzer />
           </>
         );
-      case '/contact': return <ContactPage />;
-      case '/thank-you': return <ThankYouPage />;
-      default: return <Home />;
+      case '/contact':
+        return <ContactPage />;
+      case '/thank-you':
+        return <ThankYouPage />;
+      default:
+        return <Home />;
     }
   };
 
