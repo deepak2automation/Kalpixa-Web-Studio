@@ -1,4 +1,4 @@
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon } from "lucide-react";
 
 export interface NavItem {
   label: string;
@@ -24,12 +24,12 @@ export interface SeoResult {
 }
 
 export enum PageState {
-  HOME = 'HOME',
-  SERVICES = 'SERVICES',
-  SEO_TOOLS = 'SEO_TOOLS',
-  CONTACT = 'CONTACT',
+  HOME = "HOME",
+  SERVICES = "SERVICES",
+  SEO_TOOLS = "SEO_TOOLS",
+  CONTACT = "CONTACT",
 }
 
 export interface PageProps {
-  navigate: (path: string) => void;
+  navigate: (path: string, state?: Record<string, unknown>) => void;
 }

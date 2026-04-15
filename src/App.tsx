@@ -1,26 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { HelmetProvider } from 'react-helmet-async';
-import Layout from './components/Layout';
-import SeoAnalyzer from './components/SeoAnalyzer';
-import SeoHead from './components/SeoHead';
+import React, { useState, useEffect, useCallback } from "react";
+import { HelmetProvider } from "react-helmet-async";
+import Layout from "./components/Layout";
+import SeoAnalyzer from "./components/SeoAnalyzer";
+import SeoHead from "./components/SeoHead";
 
 // Page Imports
-import Home from './pages/Home';
-import ServicesPage from './pages/Services';
-import ContactPage from './pages/Contact';
-import ThankYouPage from './pages/ThankYou';
+import Home from "./pages/Home";
+import ServicesPage from "./pages/Services";
+import ContactPage from "./pages/Contact";
+import ThankYouPage from "./pages/ThankYou";
 
 const App: React.FC = () => {
   // Safe path initialization handling both production and sandboxed/blob environments
   const getInitialPath = () => {
-    if (typeof window === 'undefined') return '/';
+    if (typeof window === "undefined") return "/";
     try {
       const path = window.location.pathname;
       // Handle standard paths, index.html, or empty paths
-      if (!path || path === '' || path.endsWith('index.html') || path.startsWith('blob:')) return '/';
+      if (
+        !path ||
+        path === "" ||
+        path.endsWith("index.html") ||
+        path.startsWith("blob:")
+      )
+        return "/";
       return path;
     } catch {
-      return '/';
+      return "/";
     }
   };
 
@@ -30,30 +36,36 @@ const App: React.FC = () => {
     const onPopState = () => {
       // Fallback to '/' if location access fails or returns unexpected values
       const p = window.location.pathname;
-      setCurrentPath((!p || p.endsWith('index.html')) ? '/' : p);
+      setCurrentPath(!p || p.endsWith("index.html") ? "/" : p);
     };
-    window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  const navigate = (path: string) => {
-    try {
-      // Try to update URL, but fail gracefully in sandboxed environments (like blobs/iframes)
-      window.history.pushState({}, '', path);
-    } catch (e) {
-      console.warn("Navigation history update skipped (environment restriction):", e);
-    }
-    setCurrentPath(path);
-    window.scrollTo(0, 0);
-  };
+  const navigate = useCallback(
+    (path: string, state?: Record<string, unknown>) => {
+      try {
+        // Try to update URL, but fail gracefully in sandboxed environments (like blobs/iframes)
+        window.history.pushState(state ?? {}, "", path);
+      } catch (e) {
+        console.warn(
+          "Navigation history update skipped (environment restriction):",
+          e,
+        );
+      }
+      setCurrentPath(path);
+      window.scrollTo(0, 0);
+    },
+    [],
+  );
 
   const renderContent = () => {
     switch (currentPath) {
-      case '/':
+      case "/":
         return <Home navigate={navigate} />;
-      case '/services':
+      case "/services":
         return <ServicesPage />;
-      case '/seo-tools':
+      case "/seo-tools":
         return (
           <>
             <SeoHead
@@ -64,9 +76,9 @@ const App: React.FC = () => {
             <SeoAnalyzer />
           </>
         );
-      case '/contact':
+      case "/contact":
         return <ContactPage navigate={navigate} />;
-      case '/thank-you':
+      case "/thank-you":
         return <ThankYouPage navigate={navigate} />;
       default:
         return <Home navigate={navigate} />;
