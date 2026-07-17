@@ -44,6 +44,11 @@ export interface SeoAuditSummary {
   https: boolean;
   finalUrl: string;
   wordCount: number;
+  favicon: boolean;
+  structuredData: boolean;
+  urlHasQuery: boolean;
+  urlDepth: number;
+  contentRatioScore: number | null;
 }
 
 export interface SeoAuditResponse {

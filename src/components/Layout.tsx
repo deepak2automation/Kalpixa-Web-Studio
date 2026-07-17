@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Menu, X, Phone, Mail, ArrowRight, Sparkles } from "lucide-react";
+import { Menu, X, Phone, Mail, ArrowRight } from "lucide-react";
 import {
   NAV_ITEMS,
   BRAND_NAME,

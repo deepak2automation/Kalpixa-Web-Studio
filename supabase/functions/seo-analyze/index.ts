@@ -55,7 +55,7 @@ async function fetchWithTiming(url: string, timeoutMs = 12000) {
   }
 }
 
-// --- Regex-based HTML extractors (no external DOM dependency) ---
+// --- Regex-based HTML extractors ---
 
 function extractTitle(html: string): string {
   const m = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
@@ -63,7 +63,6 @@ function extractTitle(html: string): string {
 }
 
 function extractMetaContent(html: string, name: string): string | null {
-  // Match meta tags by name or property attribute
   const patterns = [
     new RegExp(`<meta[^>]*\\sname=["']${name}["'][^>]*\\scontent=["']([^"']*)["']`, "i"),
     new RegExp(`<meta[^>]*\\scontent=["']([^"']*)["'][^>]*\\sname=["']${name}["']`, "i"),
@@ -75,11 +74,6 @@ function extractMetaContent(html: string, name: string): string | null {
     if (m) return m[1].trim();
   }
   return null;
-}
-
-function extractAttr(html: string, selector: string, attr: string): string | null {
-  const m = html.match(new RegExp(`<${selector}[^>]*\\s${attr}=["']([^"']*)["']`, "i"));
-  return m ? m[1].trim() : null;
 }
 
 function countTags(html: string, tag: string): number {
@@ -128,14 +122,37 @@ function extractLang(html: string): string | null {
   return m ? m[1].trim() : null;
 }
 
+function hasFavicon(html: string): boolean {
+  return /<link\b[^>]*\srel=["'](?:icon|shortcut icon|apple-touch-icon)["'][^>]*>/i.test(html);
+}
+
+function hasStructuredData(html: string): boolean {
+  return /<script\b[^>]*\stype=["']application\/ld\+json["'][^>]*>/i.test(html);
+}
+
 function stripTags(html: string): string {
-  // Remove script and style content first
   let clean = html.replace(/<script\b[\s\S]*?<\/script>/gi, " ");
   clean = clean.replace(/<style\b[\s\S]*?<\/style>/gi, " ");
-  // Remove all tags
   clean = clean.replace(/<[^>]+>/g, " ");
-  // Collapse whitespace
   return clean.replace(/\s+/g, " ").trim();
+}
+
+function getUrlDepth(url: string): number {
+  try {
+    const u = new URL(url);
+    const parts = u.pathname.split("/").filter((p) => p.length > 0);
+    return parts.length;
+  } catch {
+    return 0;
+  }
+}
+
+function getUrlHasQuery(url: string): boolean {
+  try {
+    return new URL(url).search.length > 0;
+  } catch {
+    return false;
+  }
 }
 
 function buildReport(
@@ -219,6 +236,20 @@ function buildReport(
     checks.push({ label: "Image Alt Attributes", status, detail, category: "content", points: 8, earned });
   }
 
+  // --- CONTENT LENGTH ---
+  const bodyText = stripTags(html);
+  const wordCount = bodyText ? bodyText.split(/\s+/).filter(Boolean).length : 0;
+  {
+    let earned = 0;
+    let status: "pass" | "warn" | "fail" = "fail";
+    let detail = "";
+    if (wordCount >= 300) { earned = 6; status = "pass"; detail = `${wordCount} words. Good depth for SEO.`; }
+    else if (wordCount >= 100) { earned = 4; status = "warn"; detail = `${wordCount} words. Aim for 300+ for better rankings.`; }
+    else if (wordCount > 0) { earned = 2; status = "fail"; detail = `Only ${wordCount} words. Thin content hurts rankings.`; }
+    else { earned = 0; status = "fail"; detail = "No visible text content found."; }
+    checks.push({ label: "Content Length", status, detail, category: "content", points: 6, earned });
+  }
+
   // --- SSL / HTTPS ---
   {
     let earned = 0;
@@ -241,11 +272,16 @@ function buildReport(
   }
 
   // --- CANONICAL ---
-  const canonical = extractAttr(html, "link\\b[^>]*\\srel=[\"']canonical[\"']", "href") ||
-    (() => {
-      const m = html.match(/<link[^>]*\srel=["']canonical["'][^>]*\shref=["']([^"']*)["']/i);
-      return m ? m[1].trim() : null;
-    })();
+  let canonical: string | null = null;
+  {
+    const m = html.match(/<link[^>]*\srel=["']canonical["'][^>]*\shref=["']([^"']*)["']/i);
+    if (!m) {
+      const m2 = html.match(/<link[^>]*\shref=["']([^"']*)["'][^>]*\srel=["']canonical["']/i);
+      if (m2) canonical = m2[1].trim();
+    } else {
+      canonical = m[1].trim();
+    }
+  }
   {
     let earned = 0;
     let status: "pass" | "warn" | "fail" = "warn";
@@ -268,6 +304,26 @@ function buildReport(
       }
     }
     checks.push({ label: "Robots Meta", status, detail, category: "technical", points: 5, earned });
+  }
+
+  // --- FAVICON ---
+  const favicon = hasFavicon(html);
+  {
+    let earned = 0;
+    let status: "pass" | "warn" | "fail" = "warn";
+    let detail = "No favicon found. Add one for brand consistency.";
+    if (favicon) { earned = 3; status = "pass"; detail = "Favicon detected."; }
+    checks.push({ label: "Favicon", status, detail, category: "technical", points: 3, earned });
+  }
+
+  // --- STRUCTURED DATA ---
+  const structuredData = hasStructuredData(html);
+  {
+    let earned = 0;
+    let status: "pass" | "warn" | "fail" = "warn";
+    let detail = "No structured data (JSON-LD) found. Add schema for rich snippets.";
+    if (structuredData) { earned = 5; status = "pass"; detail = "JSON-LD structured data detected."; }
+    checks.push({ label: "Structured Data (Schema)", status, detail, category: "technical", points: 5, earned });
   }
 
   // --- OPEN GRAPH ---
@@ -302,6 +358,19 @@ function buildReport(
     let detail = "No lang attribute on <html>.";
     if (lang) { earned = 4; status = "pass"; detail = `Language: ${lang}`; }
     checks.push({ label: "HTML Lang Attribute", status, detail, category: "technical", points: 4, earned });
+  }
+
+  // --- URL STRUCTURE ---
+  const urlDepth = getUrlDepth(finalUrl);
+  const urlHasQuery = getUrlHasQuery(finalUrl);
+  {
+    let earned = 0;
+    let status: "pass" | "warn" | "fail" = "pass";
+    let detail = `URL depth: ${urlDepth} levels.`;
+    if (urlDepth <= 3 && !urlHasQuery) { earned = 5; status = "pass"; detail += " Clean URL structure."; }
+    else if (urlDepth <= 3 && urlHasQuery) { earned = 3; status = "warn"; detail += " Has query parameters — consider clean URLs."; }
+    else { earned = 2; status = "warn"; detail += ` Deep path${urlHasQuery ? " with query params" : ""}. Consider flattening.`; }
+    checks.push({ label: "URL Structure", status, detail, category: "technical", points: 5, earned });
   }
 
   // --- LINK STRUCTURE ---
@@ -346,12 +415,28 @@ function buildReport(
     checks.push({ label: "HTML Page Size", status, detail, category: "performance", points: 4, earned });
   }
 
+  // --- TEXT-TO-HTML RATIO ---
+  let contentRatioScore: number | null = null;
+  {
+    let earned = 0;
+    let status: "pass" | "warn" | "fail" = "warn";
+    let detail = "";
+    if (htmlBytes > 0) {
+      const textBytes = new TextEncoder().encode(bodyText).length;
+      const ratio = (textBytes / htmlBytes) * 100;
+      contentRatioScore = Math.round(ratio * 10) / 10;
+      if (ratio >= 15 && ratio <= 50) { earned = 4; status = "pass"; detail = `Text-to-HTML ratio: ${contentRatioScore}%. Healthy.`; }
+      else if (ratio > 0) { earned = 2; status = "warn"; detail = `Text-to-HTML ratio: ${contentRatioScore}%. Ideal is 15-50%.`; }
+      else { earned = 0; status = "fail"; detail = "No visible text content relative to HTML."; }
+    } else {
+      detail = "Unable to calculate text-to-HTML ratio.";
+    }
+    checks.push({ label: "Text-to-HTML Ratio", status, detail, category: "content", points: 4, earned });
+  }
+
   const totalPossible = checks.reduce((s, c) => s + c.points, 0);
   const totalEarned = checks.reduce((s, c) => s + c.earned, 0);
   const score = Math.round((totalEarned / totalPossible) * 100);
-
-  const bodyText = stripTags(html);
-  const wordCount = bodyText ? bodyText.split(/\s+/).filter(Boolean).length : 0;
 
   const summary = {
     title: title || null,
@@ -369,6 +454,11 @@ function buildReport(
     https: isHttps,
     finalUrl,
     wordCount,
+    favicon,
+    structuredData,
+    urlHasQuery,
+    urlDepth,
+    contentRatioScore,
   };
 
   return { score, checks, summary };

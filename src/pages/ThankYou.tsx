@@ -95,7 +95,7 @@ const ThankYouPage: React.FC<PageProps> = ({ navigate }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.97, y: 18 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.45, type: "spring", stiffness: 180, damping: 20 }}
+        transition={{ duration: 0.45, type: "spring" as const, stiffness: 180, damping: 20 }}
         className="max-w-2xl w-full rounded-[32px] border border-white/10 bg-white/[0.05] backdrop-blur-2xl p-8 sm:p-10 md:p-14 shadow-[0_20px_50px_rgba(0,0,0,0.45)] text-center relative overflow-hidden"
       >
         <div className="pointer-events-none absolute inset-0">

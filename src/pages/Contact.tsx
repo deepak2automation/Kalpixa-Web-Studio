@@ -18,10 +18,8 @@ import { supabase } from "../lib/supabaseClient";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
-const NAME_REGEX =
-  /^[A-Za-zÀ-ÖØ-öø-ÿऀ-ॿঅ-ঌএ-ঐও-নপ-রলশ-হਅ-ਊਏ-ਐਓ-ਨਪ-ਲਵ-ਹઅ-ઍએ-ઐઓ-નપ-ળવ-હಅ-ಌಎ-ಐಒ-ನಪ-ಳವ-ಹఅ-ఌఎ-ఐఒ-నప-హഅ-ഌഎ-ഐഒ-നപ-ഹଅ-ଌଏ-ଐଓ-ନପ-ଳশ-ହ\s'.-]+$/;
-const EMAIL_REGEX =
-  /^[A-Za-z0-9._%+-]+@(gmail\.com|outlook\.com|hotmail\.com|live\.com|yahoo\.com|yahoo\.in|rediffmail\.com|rediff\.com|icloud\.com|me\.com|aol\.com|protonmail\.com|zoho\.com|yandex\.com|gmx\.com|mail\.com|inbox\.com|fastmail\.com|msn\.com|pm\.me|rocketmail\.com|btinternet\.com|comcast\.net|cox\.net|verizon\.net|att\.net|bellsouth\.net|earthlink\.net|optonline\.net|shaw\.ca|sympatico\.ca|qq\.com|126\.com|163\.com|sina\.com|kalpixa\.com)$/;
+const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]{2,60}$/;
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 const PHONE_REGEX = /^\+?[0-9\s\-()]{7,15}$/;
 
 type ThankYouWindow = Window & {
@@ -86,7 +84,7 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
     if (currentStep === 3) {
       if (!NAME_REGEX.test(formData.name.trim())) {
         newErrors.name =
-          "Please enter a valid name (letters only, no numbers).";
+          "Please enter a valid name (2-60 characters, letters only).";
       }
       if (!EMAIL_REGEX.test(formData.email.trim())) {
         newErrors.email = "Please enter a valid email address.";
@@ -138,6 +136,32 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
     }
   };
 
+  const submitToNetlify = async (): Promise<boolean> => {
+    const payload: Record<string, string> = {
+      "form-name": "contact",
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      service: formData.service,
+      message: formData.message.trim(),
+      "bot-field": "",
+    };
+
+    try {
+      const res = await fetch("/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: encode(payload),
+      });
+      return res.ok;
+    } catch (error) {
+      console.error("Netlify form submission failed:", error);
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateStep(3)) return;
@@ -159,21 +183,10 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
       return;
     }
 
-    // Production: also submit to Netlify Forms for email notifications.
-    const payload: Record<string, string> = {
-      ...formData,
-      "form-name": "contact",
-    };
+    // Production: submit to Netlify Forms for email notifications.
+    const netlifyOk = await submitToNetlify();
 
-    try {
-      const res = await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encode(payload),
-      });
-
-      if (!res.ok) throw new Error(`Form POST failed: ${res.status}`);
-
+    if (netlifyOk) {
       setStatus("success");
 
       const w = window as unknown as { gtag?: (...args: unknown[]) => void };
@@ -182,9 +195,12 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
       }
 
       setTimeout(() => completeSuccess(), 800);
-    } catch (error) {
-      console.error("Form submission error:", error);
-      setStatus("error");
+    } else {
+      // Netlify failed but Supabase succeeded — still navigate to thank-you
+      // since the lead was captured in the database.
+      console.warn("Netlify submission failed, but lead persisted to Supabase.");
+      setStatus("success");
+      setTimeout(() => completeSuccess(), 800);
     }
   };
 
@@ -193,7 +209,7 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
     center: {
       x: 0,
       opacity: 1,
-      transition: { type: "spring", stiffness: 300, damping: 30 },
+      transition: { type: "spring" as const, stiffness: 300, damping: 30 },
     },
     exit: (direction: number) => ({
       x: direction < 0 ? 30 : -30,
@@ -266,24 +282,16 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
         </div>
 
         <div className="bg-white/[0.05] backdrop-blur-2xl border border-white/10 p-6 sm:p-8 md:p-9 lg:p-10 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.45)] relative flex flex-col w-full max-w-3xl mx-auto mb-10 sm:mb-12">
-          {/* Netlify hidden form for build detection */}
-          <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
-            <input type="text" name="name" />
-            <input type="tel" name="phone" />
-            <input type="email" name="email" />
-            <select name="service">
-              {SERVICE_OPTIONS.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-            <textarea name="message" />
-          </form>
-
           <form
             onSubmit={handleSubmit}
             className="flex-grow flex flex-col relative w-full"
+            name="contact"
+            method="POST"
+            data-netlify="true"
+            data-netlify-honeypot="bot-field"
           >
             <input type="hidden" name="form-name" value="contact" />
+            <input type="hidden" name="bot-field" value="" />
 
             <div className={`relative w-full ${getStepMinHeight()}`}>
               <AnimatePresence custom={step} mode="wait">

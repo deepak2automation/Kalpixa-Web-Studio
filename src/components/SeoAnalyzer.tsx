@@ -24,6 +24,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import SeoHead from "./SeoHead";
 import { runSeoAudit } from "../lib/seoApi";
 import { SeoAuditResponse, SeoCheck } from "../types";
+import { supabase } from "../lib/supabaseClient";
+
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 const CATEGORY_META = {
   content: { label: "Content", icon: FileText, color: "text-blue-400" },
@@ -41,12 +44,12 @@ const STATUS_META = {
 const SeoAnalyzer: React.FC = () => {
   const [url, setUrl] = useState("");
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<SeoAuditResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(false);
   const [submittingEmail, setSubmittingEmail] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
 
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +59,8 @@ const SeoAnalyzer: React.FC = () => {
     setError(null);
     setResult(null);
     setUnlocked(false);
-    setEmailSent(false);
+    setEmail("");
+    setEmailError(null);
 
     try {
       const data = await runSeoAudit(url);
@@ -72,14 +76,29 @@ const SeoAnalyzer: React.FC = () => {
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !result) return;
+
+    if (!EMAIL_REGEX.test(email.trim())) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+
     setSubmittingEmail(true);
+    setEmailError(null);
+
     try {
-      await runSeoAudit(url, email);
-      setEmailSent(true);
+      const { error: dbError } = await supabase.from("seo_audits").insert({
+        url: result.url,
+        email: email.trim(),
+        score: result.score,
+        report: { checks: result.checks, summary: result.summary } as unknown as Record<string, unknown>,
+      });
+
+      if (dbError) throw new Error(dbError.message);
+
       setUnlocked(true);
-    } catch {
-      setEmailSent(true);
-      setUnlocked(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to save your email.";
+      setEmailError(message);
     } finally {
       setSubmittingEmail(false);
     }
@@ -90,8 +109,8 @@ const SeoAnalyzer: React.FC = () => {
     setError(null);
     setUrl("");
     setUnlocked(false);
-    setEmailSent(false);
     setEmail("");
+    setEmailError(null);
   };
 
   const scoreData = result
@@ -106,7 +125,7 @@ const SeoAnalyzer: React.FC = () => {
     <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto relative z-10">
       <SeoHead
         title="Free SEO Analyzer Tool"
-        description="Run a real-time SEO audit on any website. Checks title tags, meta descriptions, headings, image alt text, SSL, mobile viewport, Open Graph, load time, and more."
+        description="Run a real-time SEO audit on any website. Checks title tags, meta descriptions, headings, image alt text, SSL, mobile viewport, Open Graph, structured data, load time, and more."
         path="/seo-tools"
       />
 
@@ -176,7 +195,7 @@ const SeoAnalyzer: React.FC = () => {
             <div className="flex items-start gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-4 text-red-300">
               <AlertTriangle size={20} className="mt-0.5 shrink-0" />
               <div>
-                <div className="font-semibold mb-1">Couldn't complete the audit</div>
+                <div className="font-semibold mb-1">Couldn&apos;t complete the audit</div>
                 <div className="text-sm">{error}</div>
               </div>
             </div>
@@ -281,6 +300,26 @@ const SeoAnalyzer: React.FC = () => {
                     <div className="text-white font-semibold">{result.summary.wordCount}</div>
                   </div>
                 </div>
+                <div className="mt-3 grid grid-cols-3 gap-3 text-xs pt-3 border-t border-white/10">
+                  <div>
+                    <span className="text-slate-500">Favicon</span>
+                    <div className={result.summary.favicon ? "text-green-400 font-semibold" : "text-amber-400 font-semibold"}>
+                      {result.summary.favicon ? "Found" : "Missing"}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Structured data</span>
+                    <div className={result.summary.structuredData ? "text-green-400 font-semibold" : "text-amber-400 font-semibold"}>
+                      {result.summary.structuredData ? "Found" : "None"}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">URL depth</span>
+                    <div className="text-white font-semibold">
+                      {result.summary.urlDepth} {result.summary.urlDepth === 1 ? "level" : "levels"}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -339,11 +378,21 @@ const SeoAnalyzer: React.FC = () => {
                       type="email"
                       required
                       placeholder="Enter your email address"
-                      className="w-full px-5 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:border-accent focus:ring-1 focus:ring-accent outline-none focus:bg-white/10 transition-colors"
+                      className={`w-full px-5 py-4 rounded-xl bg-white/5 border text-white placeholder-slate-500 focus:outline-none transition-colors ${
+                        emailError
+                          ? "border-red-500 focus:ring-1 focus:ring-red-500"
+                          : "border-white/10 focus:border-accent focus:ring-1 focus:ring-accent focus:bg-white/10"
+                      }`}
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (emailError) setEmailError(null);
+                      }}
                       disabled={submittingEmail}
                     />
+                    {emailError && (
+                      <p className="text-red-400 text-sm text-left -mt-1">{emailError}</p>
+                    )}
                     <button
                       type="submit"
                       disabled={submittingEmail}
