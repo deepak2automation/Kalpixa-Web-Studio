@@ -33,13 +33,13 @@ const ThankYouPage: React.FC<PageProps> = ({ navigate }) => {
     const hasInMemoryAccess = thankYouWindow.__kalpixaThankYouAccess === true;
     const hasMatchingSubmissionId = Boolean(
       historyState.submissionId &&
-      storedSubmissionId &&
-      historyState.submissionId === storedSubmissionId,
+        storedSubmissionId &&
+        historyState.submissionId === storedSubmissionId,
     );
     const hasFreshSubmissionState = Boolean(
       historyState.justSubmitted &&
-      storedSubmissionFlag &&
-      hasMatchingSubmissionId,
+        storedSubmissionFlag &&
+        hasMatchingSubmissionId,
     );
 
     if (!hasInMemoryAccess && !hasFreshSubmissionState) {
@@ -59,8 +59,7 @@ const ThankYouPage: React.FC<PageProps> = ({ navigate }) => {
       }
 
       try {
-        const currentState = (window.history.state ??
-          {}) as ThankYouHistoryState;
+        const currentState = (window.history.state ?? {}) as ThankYouHistoryState;
         if (currentState.justSubmitted || currentState.submissionId) {
           window.history.replaceState({}, "", "/thank-you");
         }
@@ -96,12 +95,7 @@ const ThankYouPage: React.FC<PageProps> = ({ navigate }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.97, y: 18 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{
-          duration: 0.45,
-          type: "spring",
-          stiffness: 180,
-          damping: 20,
-        }}
+        transition={{ duration: 0.45, type: "spring", stiffness: 180, damping: 20 }}
         className="max-w-2xl w-full rounded-[32px] border border-white/10 bg-white/[0.05] backdrop-blur-2xl p-8 sm:p-10 md:p-14 shadow-[0_20px_50px_rgba(0,0,0,0.45)] text-center relative overflow-hidden"
       >
         <div className="pointer-events-none absolute inset-0">
@@ -148,7 +142,7 @@ const ThankYouPage: React.FC<PageProps> = ({ navigate }) => {
           Your project details have been successfully transmitted to our
           engineering team. We are analyzing your requirements and will reach
           out to you via email within{" "}
-          <strong className="text-white font-semibold"> 24 hours</strong>.
+          <strong className="text-white font-semibold">24 hours</strong>.
         </motion.p>
 
         <motion.div
@@ -164,21 +158,15 @@ const ThankYouPage: React.FC<PageProps> = ({ navigate }) => {
           <div className="mt-4 space-y-3 text-sm sm:text-[0.98rem] text-slate-300">
             <div className="flex items-start gap-3">
               <span className="mt-1 h-2.5 w-2.5 rounded-full bg-accent shrink-0" />
-              <span>
-                We review your project brief and requirements in detail.
-              </span>
+              <span>We review your project brief and requirements in detail.</span>
             </div>
             <div className="flex items-start gap-3">
               <span className="mt-1 h-2.5 w-2.5 rounded-full bg-accent shrink-0" />
-              <span>
-                We prepare the best next-step recommendation for your business.
-              </span>
+              <span>We prepare the best next-step recommendation for your business.</span>
             </div>
             <div className="flex items-start gap-3">
               <span className="mt-1 h-2.5 w-2.5 rounded-full bg-accent shrink-0" />
-              <span>
-                You receive a direct follow-up from our team by email.
-              </span>
+              <span>You receive a direct follow-up from our team by email.</span>
             </div>
           </div>
         </motion.div>

@@ -14,6 +14,7 @@ import SeoHead from "../components/SeoHead";
 import { CONTACT_EMAIL, PHONE_NUMBER } from "../constants";
 import { PageProps } from "../types";
 import { encode } from "../utils/form";
+import { supabase } from "../lib/supabaseClient";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
@@ -27,6 +28,8 @@ type ThankYouWindow = Window & {
   __kalpixaThankYouAccess?: boolean;
   __kalpixaThankYouSubmissionId?: string;
 };
+
+const SERVICE_OPTIONS = ["Website", "SEO", "Ecommerce", "Other"] as const;
 
 const ContactPage: React.FC<PageProps> = ({ navigate }) => {
   const [status, setStatus] = useState<FormStatus>("idle");
@@ -106,37 +109,57 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
 
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
+  const completeSuccess = () => {
+    const submissionId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    try {
+      sessionStorage.setItem("formSubmitted", "true");
+      sessionStorage.setItem("formSubmissionId", submissionId);
+    } catch (error) {
+      console.warn("Unable to persist form submission state:", error);
+    }
+    const thankYouWindow = window as ThankYouWindow;
+    thankYouWindow.__kalpixaThankYouAccess = true;
+    thankYouWindow.__kalpixaThankYouSubmissionId = submissionId;
+    navigate("/thank-you", { justSubmitted: true, submissionId });
+  };
+
+  const persistLead = async () => {
+    try {
+      const { error: dbError } = await supabase.from("leads").insert({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim() || null,
+        service: formData.service,
+        message: formData.message.trim() || null,
+      });
+      if (dbError) console.warn("Lead persistence failed:", dbError.message);
+    } catch (err) {
+      console.warn("Lead persistence error:", err);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateStep(3)) return;
 
     setStatus("submitting");
 
-    if (
+    const isLocalhost =
       window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1"
-    ) {
+      window.location.hostname === "127.0.0.1";
+
+    // Always persist to Supabase so leads are captured in the database.
+    await persistLead();
+
+    if (isLocalhost) {
       setTimeout(() => {
         setStatus("success");
-
-        const submissionId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-
-        try {
-          sessionStorage.setItem("formSubmitted", "true");
-          sessionStorage.setItem("formSubmissionId", submissionId);
-        } catch (error) {
-          console.warn("Unable to persist form submission state:", error);
-        }
-
-        const thankYouWindow = window as ThankYouWindow;
-        thankYouWindow.__kalpixaThankYouAccess = true;
-        thankYouWindow.__kalpixaThankYouSubmissionId = submissionId;
-
-        navigate("/thank-you", { justSubmitted: true, submissionId });
-      }, 1500);
+        completeSuccess();
+      }, 800);
       return;
     }
 
+    // Production: also submit to Netlify Forms for email notifications.
     const payload: Record<string, string> = {
       ...formData,
       "form-name": "contact",
@@ -153,28 +176,12 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
 
       setStatus("success");
 
-      const submissionId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-
-      try {
-        sessionStorage.setItem("formSubmitted", "true");
-        sessionStorage.setItem("formSubmissionId", submissionId);
-      } catch (error) {
-        console.warn("Unable to persist form submission state:", error);
-      }
-
-      const thankYouWindow = window as ThankYouWindow;
-      thankYouWindow.__kalpixaThankYouAccess = true;
-      thankYouWindow.__kalpixaThankYouSubmissionId = submissionId;
-
-      const w = window as any;
+      const w = window as unknown as { gtag?: (...args: unknown[]) => void };
       if (typeof w.gtag === "function") {
         w.gtag("event", "generate_lead", { method: "Netlify Form Multi-step" });
       }
 
-      setTimeout(
-        () => navigate("/thank-you", { justSubmitted: true, submissionId }),
-        1000,
-      );
+      setTimeout(() => completeSuccess(), 800);
     } catch (error) {
       console.error("Form submission error:", error);
       setStatus("error");
@@ -217,7 +224,7 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
 
       <SeoHead
         title="Start Your Project"
-        description="Get a custom quote."
+        description="Get a custom quote for your web design, SEO, or e-commerce project. Tell us what you need and we'll guide you toward the right solution."
         path="/contact"
       />
 
@@ -259,17 +266,15 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
         </div>
 
         <div className="bg-white/[0.05] backdrop-blur-2xl border border-white/10 p-6 sm:p-8 md:p-9 lg:p-10 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.45)] relative flex flex-col w-full max-w-3xl mx-auto mb-10 sm:mb-12">
-          <form
-            name="contact"
-            data-netlify="true"
-            netlify-honeypot="bot-field"
-            hidden
-          >
+          {/* Netlify hidden form for build detection */}
+          <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
             <input type="text" name="name" />
             <input type="tel" name="phone" />
             <input type="email" name="email" />
             <select name="service">
-              <option value="Website">Website</option>
+              {SERVICE_OPTIONS.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
             </select>
             <textarea name="message" />
           </form>
@@ -297,7 +302,7 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
                     </h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
-                      {["Website", "SEO", "Ecommerce", "Other"].map((srv) => (
+                      {SERVICE_OPTIONS.map((srv) => (
                         <div
                           key={srv}
                           onClick={() => {
@@ -525,7 +530,7 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
                         <AlertCircle size={18} className="mt-0.5 shrink-0" />
                         <div>
                           Something went wrong while submitting your request.
-                          Please try again.
+                          Please try again or email us directly.
                         </div>
                       </div>
                     )}

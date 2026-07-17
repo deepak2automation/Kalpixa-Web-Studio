@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import Layout from "./components/Layout";
 import SeoAnalyzer from "./components/SeoAnalyzer";
-import SeoHead from "./components/SeoHead";
 
 // Page Imports
 import Home from "./pages/Home";
@@ -64,18 +63,9 @@ const App: React.FC = () => {
       case "/":
         return <Home navigate={navigate} />;
       case "/services":
-        return <ServicesPage />;
+        return <ServicesPage navigate={navigate} />;
       case "/seo-tools":
-        return (
-          <>
-            <SeoHead
-              title="Free SEO Analyzer Tool"
-              description="Analyze your website SEO score instantly. Identify technical issues, speed problems, and meta tag errors."
-              path="/seo-tools"
-            />
-            <SeoAnalyzer />
-          </>
-        );
+        return <SeoAnalyzer />;
       case "/contact":
         return <ContactPage navigate={navigate} />;
       case "/thank-you":

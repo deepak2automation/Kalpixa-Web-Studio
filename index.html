@@ -41,8 +41,6 @@
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Preload the stylesheet to reduce render delay (safe) -->
     <link
       rel="preload"
       as="style"
@@ -61,50 +59,10 @@
       gtag('js', new Date());
       gtag('config', 'G-EXZQVCT7BQ', { anonymize_ip: true, send_page_view: true });
     </script>
-
-    <!-- Tailwind CDN (keep as-is to avoid breaking your styling) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#0f172a', // Royal Blue / Slate 900
-              accent: '#f59e0b',  // Vibrant Gold / Amber 500
-              light: '#f8fafc',
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              serif: ['Playfair Display', 'serif'],
-            },
-            animation: {
-              'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            }
-          }
-        }
-      }
-    </script>
-
-    <!-- Import map (keep as-is for your current setup) -->
-    <script type="importmap">
-    {
-      "imports": {
-        "react/": "https://esm.sh/react@^18.2.0/",
-        "react": "https://esm.sh/react@^18.2.0",
-        "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^4.2.1",
-        "react-dom/": "https://esm.sh/react-dom@^18.2.0/",
-        "react-dom": "https://esm.sh/react-dom@^18.2.0",
-        "recharts": "https://esm.sh/recharts@^2.12.2",
-        "vite": "https://esm.sh/vite@^5.1.6",
-        "lucide-react": "https://esm.sh/lucide-react@^0.344.0",
-        "react-helmet-async": "https://esm.sh/react-helmet-async@^2.0.4"
-      }
-    }
-    </script>
-  <link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/src/index.css">
 </head>
 
-  <body class="bg-slate-50 text-slate-900 font-sans antialiased">
+  <body class="bg-slate-950 text-white font-sans antialiased">
     <!--
       Netlify Form Detection
       This hidden form allows Netlify to detect fields during the build process.
@@ -118,7 +76,7 @@
     >
       <input type="hidden" name="form-name" value="contact" />
       <p hidden>
-        <label>Don’t fill this out: <input name="bot-field" /></label>
+        <label>Don't fill this out: <input name="bot-field" /></label>
       </p>
       <input type="text" name="name" />
       <input type="email" name="email" />
@@ -129,6 +87,5 @@
 
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-  <script type="module" src="/index.tsx"></script>
-</body>
+  </body>
 </html>

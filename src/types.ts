@@ -13,23 +13,44 @@ export interface Service {
   price: string;
 }
 
-export interface SeoResult {
-  score: number;
-  url: string;
-  title: string;
-  description: string;
-  loadingSpeed: number;
-  mobileFriendly: boolean;
-  socialImage: string;
-}
-
-export enum PageState {
-  HOME = "HOME",
-  SERVICES = "SERVICES",
-  SEO_TOOLS = "SEO_TOOLS",
-  CONTACT = "CONTACT",
-}
-
 export interface PageProps {
   navigate: (path: string, state?: Record<string, unknown>) => void;
+}
+
+export type SeoCheckStatus = "pass" | "warn" | "fail";
+
+export interface SeoCheck {
+  label: string;
+  status: SeoCheckStatus;
+  detail: string;
+  category: "content" | "technical" | "social" | "performance";
+  points: number;
+  earned: number;
+}
+
+export interface SeoAuditSummary {
+  title: string | null;
+  description: string | null;
+  canonical: string | null;
+  og: { title: string | null; description: string | null; image: string | null };
+  headings: { h1: number; h2: number; h3: number };
+  images: { total: number; missingAlt: number; emptyAlt: number };
+  links: { total: number; internal: number; external: number };
+  loadTime: string;
+  htmlSizeKb: number;
+  htmlLang: string | null;
+  robots: string | null;
+  viewport: string | null;
+  https: boolean;
+  finalUrl: string;
+  wordCount: number;
+}
+
+export interface SeoAuditResponse {
+  url: string;
+  score: number;
+  overallStatus: SeoCheckStatus;
+  checks: SeoCheck[];
+  summary: SeoAuditSummary;
+  error?: string;
 }
