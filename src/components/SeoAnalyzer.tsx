@@ -25,8 +25,7 @@ import SeoHead from "./SeoHead";
 import { runSeoAudit } from "../lib/seoApi";
 import { SeoAuditResponse, SeoCheck } from "../types";
 import { supabase } from "../lib/supabaseClient";
-
-const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+import { validateEmail, validateUrl } from "../utils/validation";
 
 const CATEGORY_META = {
   content: { label: "Content", icon: FileText, color: "text-blue-400" },
@@ -43,6 +42,7 @@ const STATUS_META = {
 
 const SeoAnalyzer: React.FC = () => {
   const [url, setUrl] = useState("");
+  const [urlError, setUrlError] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -53,7 +53,13 @@ const SeoAnalyzer: React.FC = () => {
 
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!url.trim()) return;
+
+    const urlErr = validateUrl(url);
+    if (urlErr) {
+      setUrlError(urlErr);
+      return;
+    }
+    setUrlError(null);
 
     setAnalyzing(true);
     setError(null);
@@ -77,8 +83,9 @@ const SeoAnalyzer: React.FC = () => {
     e.preventDefault();
     if (!email.trim() || !result) return;
 
-    if (!EMAIL_REGEX.test(email.trim())) {
-      setEmailError("Please enter a valid email address.");
+    const emailErr = validateEmail(email);
+    if (emailErr) {
+      setEmailError(emailErr);
       return;
     }
 
@@ -108,6 +115,7 @@ const SeoAnalyzer: React.FC = () => {
     setResult(null);
     setError(null);
     setUrl("");
+    setUrlError(null);
     setUnlocked(false);
     setEmail("");
     setEmailError(null);
@@ -154,10 +162,17 @@ const SeoAnalyzer: React.FC = () => {
           </div>
           <input
             type="text"
-            className="block w-full pl-12 pr-36 py-5 border border-white/10 rounded-2xl leading-5 bg-white/5 text-white placeholder-slate-500 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent focus:bg-white/10 sm:text-lg backdrop-blur-md transition-all"
+            className={`block w-full pl-12 pr-36 py-5 border rounded-2xl leading-5 bg-white/5 text-white placeholder-slate-500 focus:outline-none focus:bg-white/10 sm:text-lg backdrop-blur-md transition-all ${
+              urlError
+                ? "border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500"
+                : "border-white/10 focus:border-accent focus:ring-1 focus:ring-accent"
+            }`}
             placeholder="example.com"
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={(e) => {
+              setUrl(e.target.value);
+              if (urlError) setUrlError(null);
+            }}
             disabled={analyzing}
           />
           <button
@@ -178,6 +193,11 @@ const SeoAnalyzer: React.FC = () => {
             )}
           </button>
         </form>
+        {urlError && (
+          <p className="mt-3 text-sm text-red-400 text-center font-medium">
+            {urlError}
+          </p>
+        )}
         <p className="mt-4 text-sm text-slate-500 text-center font-medium">
           Real-time HTML analysis. No sign-up required to view your score.
         </p>

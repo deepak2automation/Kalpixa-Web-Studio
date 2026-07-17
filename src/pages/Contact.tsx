@@ -14,13 +14,10 @@ import SeoHead from "../components/SeoHead";
 import { CONTACT_EMAIL, PHONE_NUMBER } from "../constants";
 import { PageProps } from "../types";
 import { encode } from "../utils/form";
+import { validateEmail, validateName, validatePhone, validateMessage } from "../utils/validation";
 import { supabase } from "../lib/supabaseClient";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
-
-const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]{2,60}$/;
-const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-const PHONE_REGEX = /^\+?[0-9\s\-()]{7,15}$/;
 
 type ThankYouWindow = Window & {
   __kalpixaThankYouAccess?: boolean;
@@ -72,29 +69,35 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
     if (errors[name]) setErrors({ ...errors, [name]: "" });
   };
 
+  const handleFieldBlur = (
+    fieldName: "name" | "email" | "phone" | "message",
+  ) => {
+    let err: string | null = null;
+    if (fieldName === "name") err = validateName(formData.name);
+    if (fieldName === "email") err = validateEmail(formData.email);
+    if (fieldName === "phone") err = validatePhone(formData.phone);
+    if (fieldName === "message") err = validateMessage(formData.message);
+
+    setErrors((prev) => ({ ...prev, [fieldName]: err || "" }));
+  };
+
   const validateStep = (currentStep: number): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (currentStep === 2) {
-      if (wordCount === 0)
-        newErrors.message = "Please tell us a bit about your project.";
-      if (wordCount > 1000) newErrors.message = "Maximum 1000 words allowed.";
+      const msgErr = validateMessage(formData.message);
+      if (msgErr) newErrors.message = msgErr;
     }
 
     if (currentStep === 3) {
-      if (!NAME_REGEX.test(formData.name.trim())) {
-        newErrors.name =
-          "Please enter a valid name (2-60 characters, letters only).";
-      }
-      if (!EMAIL_REGEX.test(formData.email.trim())) {
-        newErrors.email = "Please enter a valid email address.";
-      }
-      if (
-        formData.phone.trim() !== "" &&
-        !PHONE_REGEX.test(formData.phone.trim())
-      ) {
-        newErrors.phone = "Please enter a valid phone number (min 7 digits).";
-      }
+      const nameErr = validateName(formData.name);
+      if (nameErr) newErrors.name = nameErr;
+
+      const emailErr = validateEmail(formData.email);
+      if (emailErr) newErrors.email = emailErr;
+
+      const phoneErr = validatePhone(formData.phone);
+      if (phoneErr) newErrors.phone = phoneErr;
     }
 
     setErrors(newErrors);
@@ -360,6 +363,7 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
                         name="message"
                         value={formData.message}
                         onChange={handleInputChange}
+                        onBlur={() => handleFieldBlur("message")}
                         placeholder="What are your goals? Do you have a timeline in mind?"
                         rows={7}
                         className={`w-full p-5 md:p-6 rounded-[22px] bg-[#0f172a]/80 border text-white placeholder-slate-500 outline-none backdrop-blur-sm transition-all resize-none text-base md:text-lg ${
@@ -434,6 +438,7 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
                             name="name"
                             value={formData.name}
                             onChange={handleInputChange}
+                            onBlur={() => handleFieldBlur("name")}
                             placeholder="Your Name"
                             className={`w-full pl-11 pr-4 py-4 rounded-[18px] bg-[#0f172a]/80 border text-white placeholder-slate-500 outline-none transition-all ${
                               errors.name
@@ -461,6 +466,7 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
                             name="phone"
                             value={formData.phone}
                             onChange={handleInputChange}
+                            onBlur={() => handleFieldBlur("phone")}
                             placeholder="Phone Number (Optional)"
                             className={`w-full pl-11 pr-4 py-4 rounded-[18px] bg-[#0f172a]/80 border text-white placeholder-slate-500 outline-none transition-all ${
                               errors.phone
@@ -487,6 +493,7 @@ const ContactPage: React.FC<PageProps> = ({ navigate }) => {
                             name="email"
                             value={formData.email}
                             onChange={handleInputChange}
+                            onBlur={() => handleFieldBlur("email")}
                             placeholder="Email Address"
                             className={`w-full pl-11 pr-4 py-4 rounded-[18px] bg-[#0f172a]/80 border text-white placeholder-slate-500 outline-none transition-all ${
                               errors.email
