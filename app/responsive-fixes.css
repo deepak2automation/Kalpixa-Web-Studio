@@ -1,0 +1,49 @@
+/* Cross-page resilience rules kept separate from the visual system. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+.site-header > *,
+.contact-layout > *,
+.contact-form,
+.field-grid,
+.field {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .site-header {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .primary-nav {
+    flex-wrap: wrap;
+    gap: 0.7rem 1.25rem;
+    justify-content: flex-start;
+    overflow: visible;
+  }
+
+  .page-hero h1,
+  .article h1,
+  .legal h1,
+  .not-found h1 {
+    font-size: clamp(2.65rem, 12vw, 3.8rem);
+    letter-spacing: -0.045em;
+    line-height: 0.98;
+    overflow-wrap: anywhere;
+  }
+
+  .page-lead {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+}
