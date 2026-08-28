@@ -1,9 +1,24 @@
 import { CtaBand } from '@/components/CtaBand';
+import { HeroMotion } from '@/components/HeroMotion';
 import { process, services } from '@/lib/site';
 
 export default function Home() {
   return <main id="main-content">
-    <section className="hero shell"><div className="hero-copy"><p className="eyebrow">Strategy · Design · Engineering</p><h1>Digital platforms that turn credibility into <em>qualified demand.</em></h1><p className="hero-lead">Kalpixa helps ambitious service businesses replace underperforming websites with fast, accessible and measurable growth systems.</p><div className="hero-actions"><a className="button" href="/contact/">Request a strategy review <span aria-hidden="true">↗</span></a><a className="text-link" href="/work/">See how we work <span aria-hidden="true">→</span></a></div><ul className="hero-principles" aria-label="Engagement principles"><li><span>01</span> Evidence before claims</li><li><span>02</span> Accessibility by design</li><li><span>03</span> Performance measured</li></ul></div><div className="hero-stage" aria-label="Kalpixa approach"><div className="stage-grid" aria-hidden="true"/><p className="stage-kicker">From first impression</p><p className="stage-number">K</p><div className="stage-card stage-card-top"><span>Positioning</span><strong>Be understood</strong></div><div className="stage-card stage-card-middle"><span>Experience</span><strong>Earn trust</strong></div><div className="stage-card stage-card-bottom"><span>Conversion</span><strong>Make action easy</strong></div><p className="stage-caption">to measurable momentum.</p></div></section>
+    <section className="hero hero-cinematic">
+      <HeroMotion/>
+      <div className="hero-veil" aria-hidden="true"/>
+      <div className="hero-cinematic-inner shell">
+        <div className="hero-copy">
+          <p className="eyebrow">Strategy · Design · Engineering</p>
+          <h1>Digital platforms that turn credibility into <em>qualified demand.</em></h1>
+          <p className="hero-lead">Kalpixa helps ambitious service businesses replace underperforming websites with fast, accessible and measurable growth systems.</p>
+          <div className="hero-actions"><a className="button" href="/contact/">Request a strategy review <span aria-hidden="true">↗</span></a><a className="text-link" href="/work/">See how we work <span aria-hidden="true">→</span></a></div>
+          <ul className="hero-principles" aria-label="Engagement principles"><li><span>01</span> Evidence before claims</li><li><span>02</span> Accessibility by design</li><li><span>03</span> Performance measured</li></ul>
+        </div>
+        <aside className="hero-intelligence" aria-label="Kalpixa operating system"><p>Kalpixa operating system</p><div><span>01 · Position</span><strong>Be understood</strong></div><div><span>02 · Experience</span><strong>Earn trust</strong></div><div><span>03 · Convert</span><strong>Make action easy</strong></div></aside>
+      </div>
+      <a className="scroll-cue" href="#services-heading"><span>Explore the system</span><i aria-hidden="true"/></a>
+    </section>
     <section className="services-strip shell" aria-labelledby="services-heading"><div className="section-intro"><p className="eyebrow">Core capabilities</p><h2 id="services-heading">One senior partner from strategy to scale.</h2><a className="text-link" href="/services/">Explore all services →</a></div><div className="service-list">{services.map((service) => <article key={service.slug}><span>{service.number}</span><h3><a href={`/services/${service.slug}/`}>{service.title}</a></h3><p>{service.short}</p></article>)}</div></section>
     <section className="dark-section"><div className="shell split-section"><div><p className="eyebrow eyebrow-light">Why Kalpixa</p><h2>Senior thinking. Fewer handoffs. Clear accountability.</h2></div><div className="prose-light"><p>Good websites are not decoration. They are a connected system of positioning, content, experience, engineering and follow-through.</p><p>Kalpixa works directly on the decisions that shape outcomes, then builds the platform those decisions deserve. No inflated claims. No mystery deliverables. No growth theatre.</p><a className="text-link text-link-light" href="/about/">Meet the studio →</a></div></div></section>
     <section className="process-section shell"><div className="section-intro"><p className="eyebrow">A visible process</p><h2>Less uncertainty at every stage.</h2></div><ol className="process-grid">{process.map(([title, text], index) => <li key={title}><span>0{index + 1}</span><h3>{title}</h3><p>{text}</p></li>)}</ol></section>
