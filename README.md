@@ -5,8 +5,9 @@ Production Next.js rebuild of [kalpixa.com](https://kalpixa.com), deployed from 
 ## Stack
 
 - Next.js 16 App Router and React 19
-- Netlify OpenNext adapter, detected automatically
+- Deterministic Next.js static export published directly from `out`, plus an isolated Netlify Function for live SEO audits
 - Netlify Forms for project enquiries, with a static form blueprint at `public/__forms.html`
+- Real-time SEO analysis for public HTTP/HTTPS pages with private-network blocking, redirect validation, timeouts and response-size limits
 - Server-rendered metadata, structured data, sitemap, robots, manifest, security headers and a real 404
 - Responsive custom CSS with semantic structure, keyboard focus and reduced-motion support
 
@@ -25,6 +26,6 @@ npm run verify:runtime
 
 ## Netlify configuration
 
-The build command and Node version are declared in `netlify.toml`. Netlify Forms must be enabled under **Forms → Enable form detection**. After deployment, submit a real controlled enquiry and confirm it appears under the `kalpixa-project` form before considering the release complete. Configure email notifications under **Configuration → Notifications → Form submission notifications**.
+The build command, publish directory and Node version are declared in `netlify.toml`. Netlify Forms must be enabled under **Forms → Enable form detection**. The production form deliberately retains the stable name `contact` because the authenticated email notification is attached to that form. After deployment, submit a controlled enquiry, confirm it appears under `contact`, verify the email hook remains enabled, and delete only the QA record.
 
 The previous production commit remains available in Git history for rollback.

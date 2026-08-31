@@ -9,7 +9,8 @@
     "start": "node scripts/serve-static.mjs",
     "lint": "eslint . --ignore-pattern .next",
     "verify:runtime": "node scripts/verify-runtime.mjs",
-    "test": "node --test tests/*.test.mjs && node scripts/verify-form-contract.mjs"
+    "verify:function": "node scripts/verify-seo-function.mjs",
+    "test": "node --test --experimental-test-isolation=none tests/*.test.mjs && node scripts/verify-form-contract.mjs"
   },
   "dependencies": {
     "next": "16.3.3",

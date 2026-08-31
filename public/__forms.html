@@ -2,13 +2,11 @@
 <html lang="en">
   <head><meta charset="utf-8"><title>Kalpixa form definition</title></head>
   <body>
-    <form name="kalpixa-project" method="POST" data-netlify="true" data-netlify-honeypot="website" hidden>
-      <input type="hidden" name="form-name" value="kalpixa-project">
-      <input name="name"><input name="email" type="email"><input name="phone"><input name="company">
-      <select name="service"><option>Website strategy &amp; build</option><option>SEO foundations</option><option>Care &amp; optimization</option><option>Other</option></select>
-      <select name="budget"><option>Not decided</option><option>₹1–3 lakh</option><option>₹3–8 lakh</option><option>₹8–20 lakh</option><option>₹20 lakh+</option></select>
-      <select name="timeline"><option>Flexible</option><option>Within 1 month</option><option>1–3 months</option><option>3–6 months</option><option>6+ months</option></select>
-      <textarea name="message"></textarea><input name="consent"><input name="website">
+    <form name="contact" method="POST" action="/thank-you/" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="contact">
+      <input name="name"><input name="email" type="email"><input name="phone">
+      <select name="service"><option>Website</option><option>SEO</option><option>Ecommerce</option><option>Other</option></select>
+      <textarea name="message"></textarea><input name="consent"><input name="bot-field">
     </form>
   </body>
 </html>

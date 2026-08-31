@@ -6,6 +6,16 @@
   NODE_VERSION = "22.14.0"
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
+[functions]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Cache-Control = "no-store"
+    Content-Type = "application/json; charset=utf-8"
+    X-Content-Type-Options = "nosniff"
+
 [[headers]]
   for = "/*"
   [headers.values]

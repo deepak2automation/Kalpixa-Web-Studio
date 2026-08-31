@@ -1,5 +1,5 @@
 const base = process.env.VERIFY_BASE_URL || 'http://localhost:3000';
-const routes = ['/','/about','/accessibility','/contact','/cookies','/insights','/insights/website-brief','/privacy','/security','/services','/services/care','/services/seo','/services/websites','/terms','/work'];
+const routes = ['/','/about','/accessibility','/contact','/cookies','/insights','/insights/website-brief','/privacy','/security','/seo-tools','/services','/services/care','/services/seo','/services/websites','/terms','/thank-you','/work'];
 const pages = await Promise.all(routes.map(async (path) => [path, await (await fetch(base + path)).text()]));
 const titles = new Map(), descriptions = new Map(), links = new Set(), failures = [];
 for (const [path, html] of pages) {
@@ -7,6 +7,12 @@ for (const [path, html] of pages) {
   const description = html.match(/<meta name="description" content="(.*?)"/)?.[1];
   const canonical = html.match(/<link rel="canonical" href="(.*?)"/)?.[1];
   if (!title || !description || !canonical) failures.push(`${path}: missing metadata`);
+  if ((html.match(/<h1\b/g) || []).length !== 1) failures.push(`${path}: must contain exactly one h1`);
+  if (!html.includes('<main id="main-content"')) failures.push(`${path}: main landmark missing`);
+  if (!html.includes('<html lang="en"')) failures.push(`${path}: document language missing`);
+  if (/coming soon|coming next|lorem ipsum|\bTODO\b/i.test(html)) failures.push(`${path}: unfinished copy found`);
+  if (/href="#"/i.test(html)) failures.push(`${path}: placeholder link found`);
+  if (path === '/thank-you' && !html.includes('noindex')) failures.push(`${path}: confirmation page must be noindex`);
   if (titles.has(title)) failures.push(`${path}: duplicate title with ${titles.get(title)}`);
   if (descriptions.has(description)) failures.push(`${path}: duplicate description with ${descriptions.get(description)}`);
   titles.set(title, path); descriptions.set(description, path);

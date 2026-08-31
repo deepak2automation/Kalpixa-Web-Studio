@@ -1,7 +1,21 @@
 import type { Metadata } from 'next';
-import { CtaBand } from '@/components/CtaBand';
+import Script from 'next/script';
 import { PageHero } from '@/components/PageHero';
-import { services } from '@/lib/site';
+import { services, site } from '@/lib/site';
 
-export const metadata: Metadata = { title: 'Digital Strategy, Web Design, SEO & Care', description: 'Explore Kalpixa services: conversion websites, durable search foundations and continuous website care.', alternates: { canonical: '/services' } };
-export default function ServicesPage() { return <main id="main-content"><PageHero eyebrow="Capabilities" title="Connected expertise for your most important digital touchpoint." lead="Choose a focused engagement or combine strategy, content, design, engineering and optimization into one accountable program."/><section className="cards-section shell">{services.map((service) => <article className="service-card" key={service.slug}><span>{service.number}</span><h2>{service.title}</h2><p>{service.short}</p><strong>{service.outcome}</strong><a className="text-link" href={`/services/${service.slug}/`}>Explore the service →</a></article>)}</section><section className="principles-band shell"><div><span>01</span><h3>Useful before impressive</h3><p>Every decision must help a real person understand, trust or act.</p></div><div><span>02</span><h3>Measurable before launch</h3><p>Success criteria and instrumentation belong in the brief, not the retrospective.</p></div><div><span>03</span><h3>Maintainable by design</h3><p>Clear ownership, accessible systems and documentation prevent launch-day decay.</p></div></section><CtaBand/></main>; }
+export const metadata: Metadata = { title: 'Web Design & SEO Services', description: 'From custom web design to advanced SEO and mobile apps. See our affordable pricing packages for local business growth.', alternates: { canonical: '/services' } };
+
+const serviceJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  itemListElement: services.map((service, index) => ({ '@type': 'ListItem', position: index + 1, item: { '@type': 'Service', name: service.title, description: service.short, provider: { '@type': 'Organization', name: site.name, url: site.url } } })),
+};
+
+export default function ServicesPage() {
+  return <main id="main-content" className="original-services-page">
+    <PageHero eyebrow="What We Offer" title="Our Services" lead="High-performance solutions designed to strengthen your digital presence, improve user experience, and help your business scale with confidence."/>
+    <section className="service-catalog shell" aria-label="Kalpixa services">{services.map((service) => <article className="catalog-card" id={service.slug} key={service.slug}><div className="catalog-card-top"><span>{service.number}</span><strong>{service.price}</strong></div><h2>{service.title}</h2><p>{service.short}</p><ul>{service.features.map((feature) => <li key={feature}>{feature}</li>)}</ul><a className="text-link" href="/contact/">Get Started →</a></article>)}</section>
+    <section className="service-assurance shell"><div><p className="eyebrow">Built around your business</p><h2>Not sure which service you need?</h2></div><div><p>Tell us where you are now and what outcome matters. We will help you choose the right starting point without pressure or unnecessary scope.</p><a className="button" href="/contact/">Start Your Project →</a></div></section>
+    <Script id="services-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}/>
+  </main>;
+}

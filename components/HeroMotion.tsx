@@ -79,11 +79,13 @@ export function HeroMotion() {
     resize();
     document.addEventListener('visibilitychange', onVisibility);
     interactionEvents.forEach((event) => window.addEventListener(event, activate, { passive: true, once: true }));
+    const autoStart = window.setTimeout(activate, 900);
 
     return () => {
       active = false;
       document.documentElement.classList.remove('motion-engaged');
       observer.disconnect();
+      window.clearTimeout(autoStart);
       document.removeEventListener('visibilitychange', onVisibility);
       interactionEvents.forEach((event) => window.removeEventListener(event, activate));
       if (frame) window.cancelAnimationFrame(frame);
