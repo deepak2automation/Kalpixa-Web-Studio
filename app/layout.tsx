@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import Script from 'next/script';
 import './globals.css';
 import './responsive-fixes.css';
 import './premium.css';
@@ -24,7 +23,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: [{ media: '(prefers-color-scheme: light)', color: '#f7f8fb' }, { media: '(prefers-color-scheme: dark)', color: '#06131d' }], colorScheme: 'light dark' };
 
 const themeBootstrap = `(() => { try { const saved = localStorage.getItem('kalpixa:theme'); const theme = saved === 'light' || saved === 'dark' ? saved : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); document.documentElement.dataset.theme = theme; document.documentElement.style.colorScheme = theme; } catch { document.documentElement.dataset.theme = 'light'; } })();`;
+const organizationJsonLdText = JSON.stringify(organizationJsonLd).replace(/</g, '\\u003c');
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en" suppressHydrationWarning><head><script id="theme-bootstrap" dangerouslySetInnerHTML={{ __html: themeBootstrap }}/></head><body><ExperienceEnhancements/><a className="skip-link" href="#main-content">Skip to main content</a><SiteHeader />{children}<SiteFooter /><FloatingWhatsApp/><Script id="organization-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} /></body></html>;
+  return <html lang="en" suppressHydrationWarning><head><script id="theme-bootstrap" dangerouslySetInnerHTML={{ __html: themeBootstrap }}/><script id="organization-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationJsonLdText }}/></head><body><ExperienceEnhancements/><a className="skip-link" href="#main-content">Skip to main content</a><SiteHeader />{children}<SiteFooter /><FloatingWhatsApp/></body></html>;
 }

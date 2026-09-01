@@ -1,11 +1,10 @@
 /* eslint-disable @next/next/no-img-element -- Self-hosted, pre-sized WebP editorial asset avoids a runtime image service. */
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import { PageHero } from '@/components/PageHero';
 import { services, site } from '@/lib/site';
 import { capabilityCount, capabilityGroups } from '@/lib/capabilities';
 
-export const metadata: Metadata = { title: 'Website, SEO, Marketing & E-Commerce Services', description: 'Explore Kalpixa Web Studio capabilities across websites, SEO, content, digital marketing, analytics, e-commerce, marketplaces and security.', alternates: { canonical: '/services' } };
+export const metadata: Metadata = { title: 'Digital Growth & Commerce Services', description: 'Explore Kalpixa Web Studio capabilities across websites, SEO, content, digital marketing, analytics, e-commerce, marketplaces and security.', alternates: { canonical: '/services' } };
 
 const serviceJsonLd = {
   '@context': 'https://schema.org',
@@ -13,6 +12,7 @@ const serviceJsonLd = {
   numberOfItems: capabilityCount,
   itemListElement: capabilityGroups.flatMap((group) => group.capabilities).map((capability, index) => ({ '@type': 'ListItem', position: index + 1, item: { '@type': 'Service', name: capability.name, description: capability.description, provider: { '@type': 'Organization', name: site.name, url: site.url } } })),
 };
+const serviceJsonLdText = JSON.stringify(serviceJsonLd).replace(/</g, '\\u003c');
 
 export default function ServicesPage() {
   return <main id="main-content" className="original-services-page">
@@ -28,6 +28,6 @@ export default function ServicesPage() {
     </section>
     <aside className="platform-reality shell"><p className="eyebrow">No false guarantees</p><h2>We can improve readiness and execution. Platforms make their own decisions.</h2><p>Search ranking, advertising results, marketplace or payment approval, AdSense acceptance, Instagram commerce eligibility and revenue are never guaranteed. They depend on the client’s accounts, content, product data, policies, market, budget, infrastructure and ongoing operations.</p></aside>
     <section className="service-assurance shell"><div><p className="eyebrow">Built around your business</p><h2>Not sure which service you need?</h2></div><div><p>Tell us where you are now and what outcome matters. We will help you choose the right starting point without pressure or unnecessary scope.</p><a className="button" href="/contact/">Start Your Project →</a></div></section>
-    <Script id="services-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}/>
+    <script id="services-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: serviceJsonLdText }}/>
   </main>;
 }
