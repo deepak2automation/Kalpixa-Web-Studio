@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { PageHero } from '@/components/PageHero';
 import { SeoAnalyzer } from './SeoAnalyzer';
 
 export const metadata: Metadata = {
@@ -8,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function SeoToolsPage() {
-  return <main id="main-content" className="seo-page"><section className="seo-intro shell"><p className="eyebrow">Live Audit Tool</p><h1>Is Your Website <em>Losing Money?</em></h1><p className="page-lead">Get a real, comprehensive SEO and performance report in under 30 seconds. We fetch your page and analyze the actual HTML—no fake scores.</p></section><SeoAnalyzer/></main>;
+  return <main id="main-content" className="seo-page"><PageHero eyebrow="Live SEO analyzer · 21 checks" title="See what a public page actually exposes." lead="Enter a public HTTP or HTTPS URL. The analyzer fetches the live response and evaluates the returned HTML, metadata, headings, links, images, structured data, security signals and response characteristics." image="analytics"/><SeoAnalyzer/></main>;
 }

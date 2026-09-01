@@ -1,5 +1,5 @@
 const base = process.env.VERIFY_BASE_URL || 'http://localhost:3000';
-const routes = ['/','/about','/accessibility','/contact','/cookies','/insights','/insights/website-brief','/privacy','/security','/seo-tools','/services','/services/care','/services/seo','/services/websites','/terms','/thank-you','/work'];
+const routes = ['/','/about','/accessibility','/contact','/cookies','/image-credits','/insights','/insights/website-brief','/privacy','/security','/seo-tools','/services','/services/care','/services/seo','/services/websites','/terms','/thank-you','/work'];
 const pages = await Promise.all(routes.map(async (path) => [path, await (await fetch(base + path)).text()]));
 const titles = new Map(), descriptions = new Map(), links = new Set(), failures = [];
 for (const [path, html] of pages) {

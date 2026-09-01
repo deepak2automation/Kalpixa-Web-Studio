@@ -1,11 +1,12 @@
+/* eslint-disable @next/next/no-img-element -- Self-hosted, pre-sized WebP editorial asset avoids a runtime image service. */
 import { HeroMotion } from '@/components/HeroMotion';
 import { process, services } from '@/lib/site';
 
 const standards = [
-  ['1.4s', 'Avg. load time'],
-  ['3.2x', 'More enquiries'],
-  ['99.9%', 'Uptime'],
-  ['A+', 'Security grade'],
+  ['≤2.5s', 'LCP target'],
+  ['90+', 'Performance target'],
+  ['AA', 'Accessibility target'],
+  ['0', 'Known critical defects at release'],
 ];
 
 export default function Home() {
@@ -21,7 +22,6 @@ export default function Home() {
           <div className="hero-actions"><a className="button" href="/seo-tools/">Free SEO Audit <span aria-hidden="true">↗</span></a><a className="text-link" href="/services/">View Services <span aria-hidden="true">→</span></a></div>
           <ul className="hero-principles" aria-label="Kalpixa benefits"><li><span aria-hidden="true">✓</span> Premium design</li><li><span aria-hidden="true">✓</span> Better conversions</li><li><span aria-hidden="true">✓</span> Mobile-first experience</li></ul>
         </div>
-        <aside className="hero-intelligence" aria-label="Kalpixa showcase"><p>Kalpixa Showcase</p><div><span>Design</span><strong>Premium visual identity</strong></div><div><span>Performance</span><strong>Fast, modern user experience</strong></div><div><span>Outcome</span><strong>More trust and enquiries</strong></div></aside>
       </div>
       <a className="scroll-cue" href="#performance-standard"><span>Explore Kalpixa</span><i aria-hidden="true"/></a>
     </section>
@@ -35,7 +35,7 @@ export default function Home() {
     </section>
 
     <section className="brand-statement dark-section">
-      <div className="shell split-section"><div><p className="eyebrow eyebrow-light">Why Kalpixa</p><h2>A website should not just exist online. It should elevate the business behind it.</h2></div><div className="prose-light"><p>We help local businesses look more established, feel more premium, and convert more visitors through stronger design, better structure, and modern digital execution.</p><p>The goal is not more noise. The goal is a cleaner, sharper, more credible online presence that makes customers trust you faster.</p></div></div>
+      <div className="shell brand-story-grid"><div><p className="eyebrow eyebrow-light">Why Kalpixa</p><h2>A website should not just exist online. It should elevate the business behind it.</h2><div className="prose-light"><p>We help local businesses look more established, feel more premium, and convert more visitors through stronger design, better structure, and modern digital execution.</p><p>The goal is not more noise. The goal is a cleaner, sharper, more credible online presence that makes customers trust you faster.</p></div></div><figure className="brand-story-media"><img src="/studio/analytics.webp" alt="A business team reviewing charts and digital analytics" loading="lazy"/><figcaption>Editorial photography · Yan Krukau / Pexels. <a href="/image-credits/">Credits</a></figcaption></figure></div>
     </section>
 
     <section className="original-services shell" aria-labelledby="services-heading">
