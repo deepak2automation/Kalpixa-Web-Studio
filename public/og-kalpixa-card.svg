@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Kalpixa Web Studio</title>
+  <desc id="desc">Premium websites, search and digital growth systems.</desc>
+  <defs>
+    <radialGradient id="a" cx="0" cy="0" r="1" gradientTransform="translate(1010 110) rotate(130) scale(620)"><stop stop-color="#23cfd0" stop-opacity=".32"/><stop offset="1" stop-color="#23cfd0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="b" cx="0" cy="0" r="1" gradientTransform="translate(90 590) rotate(-35) scale(620)"><stop stop-color="#7c5cff" stop-opacity=".42"/><stop offset="1" stop-color="#7c5cff" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="#06131d"/>
+  <rect width="1200" height="630" fill="url(#a)"/>
+  <rect width="1200" height="630" fill="url(#b)"/>
+  <g opacity=".14" stroke="#fff"><path d="M0 105h1200M0 210h1200M0 315h1200M0 420h1200M0 525h1200"/><path d="M100 0v630M300 0v630M500 0v630M700 0v630M900 0v630M1100 0v630"/></g>
+  <g transform="translate(84 75) scale(1.55)">
+    <path d="M7 6h17v23L45 6h20L39 35l28 31H46L24 43v23H7Z" fill="#fff"/>
+    <path d="M24 35c11-1 18-7 24-17C53 10 60 6 68 4c-3 15-11 28-25 36-7 4-14 5-19 4Z" fill="#ffb34e"/>
+    <path d="M29 35c8-2 14-7 19-15 3-5 7-9 12-12-3 10-10 20-20 26-4 2-8 4-11 4Z" fill="#ffe1a0"/>
+    <path d="m24 46 17 18H29L20 54Z" fill="#23cfd0"/>
+    <rect x="61" y="3" width="7" height="7" rx="2" fill="#c9ff5e"/>
+    <rect x="57" y="14" width="5" height="5" rx="1.5" fill="#7c5cff"/>
+  </g>
+  <text x="84" y="260" fill="#fff" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="78" font-weight="850" letter-spacing="-4">Kalpixa Web Studio</text>
+  <text x="88" y="346" fill="#c9ff5e" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="25" font-weight="800" letter-spacing="5">DESIGN · SEARCH · DIGITAL GROWTH</text>
+  <text x="86" y="445" fill="#dce8ee" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="41" font-weight="620">Transforming local businesses</text>
+  <text x="86" y="496" fill="#dce8ee" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="41" font-weight="620">into credible digital brands.</text>
+  <path d="M86 552h1028" stroke="#fff" stroke-opacity=".22"/>
+  <text x="86" y="590" fill="#9eb1bd" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="20" font-weight="650" letter-spacing="1.2">KALPIXA.COM</text>
+</svg>

@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function SeoToolsPage() {
-  return <main id="main-content" className="seo-page"><PageHero eyebrow="Live SEO analyzer · 21 checks" title="See what a public page actually exposes." lead="Enter a public HTTP or HTTPS URL. The analyzer fetches the live response and evaluates the returned HTML, metadata, headings, links, images, structured data, security signals and response characteristics." image="analytics"/><SeoAnalyzer/></main>;
+  return <main id="main-content" className="seo-page"><PageHero eyebrow="Live SEO analyzer · 21 checks" title="See what a public page actually exposes." lead="Enter a public HTTP or HTTPS URL. The analyzer fetches the live response and evaluates the returned HTML, metadata, headings, links, images, structured data, security signals and response characteristics." image="seoAnalyzer"/><SeoAnalyzer/></main>;
 }

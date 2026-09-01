@@ -7,7 +7,7 @@ const eslintConfig = defineConfig([
   ...nextTs,
   // Native navigation is intentional for deterministic static CDN exports.
   { rules: { '@next/next/no-html-link-for-pages': 'off' } },
-  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
+  globalIgnores(['.next/**', '.qa-artifacts/**', 'out/**', 'build/**', 'next-env.d.ts']),
 ]);
 
 export default eslintConfig;

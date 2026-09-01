@@ -35,7 +35,7 @@ export default function Home() {
     </section>
 
     <section className="brand-statement dark-section">
-      <div className="shell brand-story-grid"><div><p className="eyebrow eyebrow-light">Why Kalpixa</p><h2>A website should not just exist online. It should elevate the business behind it.</h2><div className="prose-light"><p>We help local businesses look more established, feel more premium, and convert more visitors through stronger design, better structure, and modern digital execution.</p><p>The goal is not more noise. The goal is a cleaner, sharper, more credible online presence that makes customers trust you faster.</p></div></div><figure className="brand-story-media"><img src="/studio/analytics.webp" alt="A business team reviewing charts and digital analytics" loading="lazy"/><figcaption>Editorial photography · Yan Krukau / Pexels. <a href="/image-credits/">Credits</a></figcaption></figure></div>
+      <div className="shell brand-story-grid"><div><p className="eyebrow eyebrow-light">Why Kalpixa</p><h2>A website should not just exist online. It should elevate the business behind it.</h2><div className="prose-light"><p>We help local businesses look more established, feel more premium, and convert more visitors through stronger design, better structure, and modern digital execution.</p><p>The goal is not more noise. The goal is a cleaner, sharper, more credible online presence that makes customers trust you faster.</p></div></div><figure className="brand-story-media"><img src="/studio/studio-story.webp" alt="A collaborative digital team working in a modern studio" loading="lazy" decoding="async"/></figure></div>
     </section>
 
     <section className="original-services shell" aria-labelledby="services-heading">

@@ -1,4 +1,6 @@
-const base = process.env.VERIFY_BASE_URL || 'http://localhost:3000';
+// Match the local static server's explicit bind address. Using `localhost` can
+// resolve to an unrelated IPv6 listener on development machines.
+const base = process.env.VERIFY_BASE_URL || 'http://127.0.0.1:3000';
 const routes = ['/','/about','/accessibility','/contact','/cookies','/image-credits','/insights','/insights/website-brief','/privacy','/security','/seo-tools','/services','/services/care','/services/seo','/services/websites','/terms','/thank-you','/work'];
 const pages = await Promise.all(routes.map(async (path) => [path, await (await fetch(base + path)).text()]));
 const titles = new Map(), descriptions = new Map(), links = new Set(), failures = [];
