@@ -64,15 +64,24 @@ body {
 }
 .site-header.is-scrolled { min-height: 76px; background: var(--surface-glass); }
 .brand { gap: .78rem; flex: 0 0 auto; }
-.brand-symbol { width: 58px; overflow: visible; color: var(--ink); filter: drop-shadow(0 12px 24px rgba(59, 42, 137, .22)); transition: transform 240ms cubic-bezier(.2, .8, .2, 1), filter 240ms ease; }
-.brand:hover .brand-symbol { transform: translateY(-2px) rotate(-1deg); filter: drop-shadow(0 16px 28px rgba(59, 42, 137, .3)); }
-.brand-prism-ink { fill: var(--ink); }
-.brand-prism-wing { fill: var(--gold); }
-.brand-prism-light { fill: #ffe2a7; }
-.brand-prism-accent { fill: var(--aqua); }
-.brand-pixel-a { fill: var(--lime); }
-.brand-pixel-b { fill: var(--coral); }
-.brand-pixel-c { fill: var(--violet); }
+.brand-symbol { width: 58px; overflow: visible; filter: drop-shadow(0 13px 24px rgba(31, 55, 116, .3)); transition: transform 240ms cubic-bezier(.2, .8, .2, 1), filter 240ms ease; }
+.brand:hover .brand-symbol { transform: translateY(-2px); filter: drop-shadow(0 17px 30px rgba(35, 83, 149, .38)); }
+.brand-emblem-core { fill: #071529; }
+.brand-emblem-frame { fill: none; stroke: rgba(166, 211, 255, .5); stroke-width: 1.2; }
+.brand-emblem-violet, .brand-emblem-gold, .brand-emblem-aqua { fill: none; stroke-width: 2.8; stroke-linecap: round; }
+.brand-emblem-violet { stroke: #7968f2; }
+.brand-emblem-gold { stroke: #f3bf68; }
+.brand-emblem-aqua { stroke: #29c8dc; }
+.brand-emblem-k { fill: #f8fbff; }
+.brand-emblem-cut { fill: #13264a; }
+.brand-circuit { fill: none; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; }
+.brand-circuit-violet { stroke: #7968f2; }
+.brand-circuit-aqua { stroke: #18b9d8; }
+.brand-circuit-gold { stroke: #e9a944; }
+.brand-node { stroke: #f8fbff; stroke-width: .8; }
+.brand-node-violet { fill: #7968f2; }
+.brand-node-aqua { fill: #18c5df; }
+.brand-node-gold { fill: #f2b95b; }
 .brand strong { font-size: 1.16rem; font-weight: 800; letter-spacing: -.04em; }
 .brand small { margin-top: .04rem; color: var(--muted); font-size: .58rem; font-weight: 800; letter-spacing: .22em; }
 .primary-nav { grid-column: auto; grid-row: auto; justify-self: center; gap: clamp(1.1rem, 2.5vw, 2.1rem); border: 0; padding: 0; }
@@ -414,5 +423,6 @@ html[data-theme='dark'] .form-status.success { background: #153426; }
 
 @media (forced-colors: active) {
   .theme-toggle, .menu-toggle, .floating-whatsapp, .capability-group { border: 2px solid ButtonText; }
-  .brand-prism-ink, .brand-prism-wing, .brand-prism-light, .brand-prism-accent, .brand-pixel { fill: CanvasText; }
+  .brand-emblem-core, .brand-emblem-k, .brand-emblem-cut, .brand-node { fill: CanvasText; }
+  .brand-emblem-frame, .brand-emblem-violet, .brand-emblem-gold, .brand-emblem-aqua, .brand-circuit { stroke: CanvasText; }
 }

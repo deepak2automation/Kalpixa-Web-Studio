@@ -1,15 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 100" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 112" role="img" aria-labelledby="title desc">
   <title id="title">Kalpixa Web Studio</title>
-  <desc id="desc">A precision-cut K prism with a rising creative wing and pixel signals beside the Kalpixa Web Studio wordmark.</desc>
-  <g transform="translate(10 11) scale(1.08)">
-    <path d="M7 6h17v23L45 6h20L39 35l28 31H46L24 43v23H7Z" fill="#0b1020"/>
-    <path d="M24 35c11-1 18-7 24-17C53 10 60 6 68 4c-3 15-11 28-25 36-7 4-14 5-19 4Z" fill="#ffb34e"/>
-    <path d="M29 35c8-2 14-7 19-15 3-5 7-9 12-12-3 10-10 20-20 26-4 2-8 4-11 4Z" fill="#ffe1a0"/>
-    <path d="m24 46 17 18H29L20 54Z" fill="#23cfd0"/>
-    <rect x="61" y="3" width="7" height="7" rx="2" fill="#c9ff5e"/>
-    <rect x="57" y="14" width="5" height="5" rx="1.5" fill="#7c5cff"/>
-    <rect x="66" y="18" width="4" height="4" rx="1" fill="#ff6b57"/>
+  <desc id="desc">A precision-cut K with circuit paths inside a rounded technology frame beside the Kalpixa Web Studio wordmark.</desc>
+  <defs>
+    <linearGradient id="frame" x1="12" y1="10" x2="83" y2="91" gradientUnits="userSpaceOnUse"><stop stop-color="#7968f2"/><stop offset=".5" stop-color="#f3bf68"/><stop offset="1" stop-color="#29c8dc"/></linearGradient>
+  </defs>
+  <g transform="translate(8 7) scale(1.36)">
+    <rect x="2" y="2" width="68" height="68" rx="20" fill="#071529"/>
+    <rect x="4" y="4" width="64" height="64" rx="18" fill="none" stroke="url(#frame)" stroke-width="1.7"/>
+    <path d="M16 14h12v16l21-16h16L41 34l24 24H49L28 41v17H16Z" fill="#f8fbff"/>
+    <path d="m34 34 16-12-8 12 9 10Z" fill="#13264a"/>
+    <g fill="none" stroke-linecap="round" stroke-width="1.35"><path d="M22 20v30" stroke="#7968f2"/><path d="m29 33 18-13" stroke="#18b9d8"/><path d="m29 39 18 14" stroke="#e9a944"/></g>
+    <g stroke="#f8fbff" stroke-width=".8"><circle cx="22" cy="20" r="2.1" fill="#f2b95b"/><circle cx="22" cy="35" r="2.3" fill="#18c5df"/><circle cx="22" cy="50" r="2.1" fill="#7968f2"/><circle cx="47" cy="20" r="2.1" fill="#18c5df"/><circle cx="47" cy="53" r="2.1" fill="#f2b95b"/></g>
   </g>
-  <text x="107" y="53" fill="#0b1020" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="45" font-weight="850" letter-spacing="-2.2">Kalpixa</text>
-  <text x="111" y="78" fill="#566176" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="800" letter-spacing="4.4">WEB STUDIO</text>
+  <text x="124" y="59" fill="#0b1020" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="47" font-weight="850" letter-spacing="-2.3">Kalpixa</text>
+  <text x="128" y="86" fill="#566176" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="11" font-weight="800" letter-spacing="4.8">WEB STUDIO</text>
 </svg>
