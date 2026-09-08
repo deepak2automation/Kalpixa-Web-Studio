@@ -26,6 +26,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run release:check
+        env:
+          # The runner owns the bind mount; use the authoritative CI revision.
+          COMMIT_REF: ${{ github.sha }}
       - name: Verify preinstalled browser executables
         run: node --input-type=module -e "import { existsSync } from 'node:fs'; import { chromium, firefox, webkit } from 'playwright'; for (const browser of [chromium, firefox, webkit]) { if (!existsSync(browser.executablePath())) throw new Error('The browser image must match the pinned Playwright package.'); }"
       - run: npm run test:browser
