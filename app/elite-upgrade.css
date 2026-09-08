@@ -276,6 +276,7 @@ main { color: var(--ink); }
 .button-gold:hover, .button-gold:focus-visible { background: #fff; border-color: #fff; color: #08111d; }
 .contact-form > .button:focus-visible { background: var(--violet); color: #fff; }
 .seo-search > div:focus-within { outline: 3px solid var(--gold-dark); outline-offset: 3px; }
+.seo-search > label { color: var(--ink); }
 
 /* Floating WhatsApp control */
 .floating-whatsapp {

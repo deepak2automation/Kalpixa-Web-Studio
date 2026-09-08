@@ -29,6 +29,7 @@ for (const route of routes) {
     await expect(page.locator('main h1')).toBeVisible();
     for (const theme of ['light', 'dark']) {
       await setTheme(page, theme);
+      if (route === '/seo-tools/') await expect(page.locator('.seo-search > label')).toHaveCSS('color', theme === 'dark' ? 'rgb(238, 246, 248)' : 'rgb(11, 16, 32)');
       await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
       for (const image of await page.locator('main img').all()) {
         await image.scrollIntoViewIfNeeded();
