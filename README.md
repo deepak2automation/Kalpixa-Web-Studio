@@ -25,7 +25,7 @@ npm run verify:function
 
 Use Node 22.13 or later in the maintained Node 22 line. `release:check` runs lint, unit/security tests, the form contract, the production build (including TypeScript), and export validation. `verify:runtime` checks the running server at `http://127.0.0.1:3000`. Set `VERIFY_BASE_URL` to validate a deployed site. On Windows, the browser suite uses installed Google Chrome for Chromium projects; Firefox and WebKit use isolated Playwright installations. On Linux it uses Playwright Chromium.
 
-Browser tests start their own static server on port 4173. Form and Analyzer response fixtures are intercepted locally: they do **not** send real enquiries and do **not** prove email delivery. The preview server explicitly rejects POST requests instead of incorrectly returning a successful HTML response.
+Browser tests start their own static server on port 4173. CI uses the official Playwright container, pinned by version and immutable digest, with browsers and OS dependencies preinstalled; update that image together with `@playwright/test`. Form and Analyzer response fixtures are intercepted locally: they do **not** send real enquiries and do **not** prove email delivery. The preview server explicitly rejects POST requests instead of incorrectly returning a successful HTML response.
 
 ## Netlify configuration
 
