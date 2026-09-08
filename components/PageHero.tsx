@@ -19,7 +19,7 @@ export type PageVisual = keyof typeof images;
 export function PageHero({ eyebrow, title, lead, image }: { eyebrow: string; title: string; lead: string; image: PageVisual }) {
   const visual = images[image];
   return <section className="page-hero">
-    <img className="page-hero-image" src={visual.src} alt="" aria-hidden="true" fetchPriority="high" decoding="async" style={{ objectPosition: visual.position }}/>
+    <img className="page-hero-image" src={visual.src} alt="" aria-hidden="true" loading={image === 'notFound' ? 'lazy' : 'eager'} fetchPriority={image === 'notFound' ? 'low' : 'high'} decoding="async" style={{ objectPosition: visual.position }}/>
     <div className="page-hero-overlay" aria-hidden="true"/>
     <div className="page-hero-inner shell"><p className="eyebrow">{eyebrow}</p><h1>{title}</h1><p className="page-lead">{lead}</p></div>
   </section>;

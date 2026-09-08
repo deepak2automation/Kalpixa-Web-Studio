@@ -1,8 +1,7 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { validateProjectForm } from '@/lib/form-validation.mjs';
+import { FormEvent, useRef, useState } from 'react';
+import { fieldLimits, validateProjectForm } from '@/lib/form-validation.mjs';
 
 type ErrorKey = 'form' | 'name' | 'company' | 'email' | 'phone' | 'website' | 'service' | 'timeline' | 'budget' | 'message' | 'consent';
 type Errors = Partial<Record<ErrorKey, string>>;
@@ -11,13 +10,14 @@ const formName = 'contact';
 const serviceOptions = ['Website & Platform', 'SEO & Content', 'Digital Marketing', 'E-Commerce', 'Analytics & Tracking', 'Other'];
 
 export function ContactForm() {
-  const router = useRouter();
+  const inFlight = useRef(false);
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState<Errors>({});
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (inFlight.current) return;
     setMessage('');
     setErrors({});
 
@@ -32,6 +32,7 @@ export function ContactForm() {
       return;
     }
 
+    inFlight.current = true;
     setStatus('sending');
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 12000);
@@ -42,10 +43,12 @@ export function ContactForm() {
       if (!response.ok) throw new Error(`Submission failed: ${response.status}`);
       form.reset();
       setStatus('success');
-      setMessage('Your project brief has been securely received. Opening your confirmation…');
-      window.sessionStorage.setItem('kalpixa:submitted', 'true');
-      window.setTimeout(() => router.push('/thank-you/'), 350);
+      setMessage('Your project brief was submitted. Opening your confirmation…');
+      try { window.sessionStorage.setItem('kalpixa:submitted', 'true'); } catch { /* Optional storage must not turn a successful POST into a delivery error. */ }
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- Native document navigation is intentional for this static Netlify form confirmation.
+      window.location.assign('/thank-you/');
     } catch {
+      inFlight.current = false;
       setStatus('error');
       setMessage('We could not confirm delivery. Please email deepak@kalpixa.com or call +91 79000 71164.');
     } finally {
@@ -53,7 +56,7 @@ export function ContactForm() {
     }
   }
 
-  return <form className="contact-form" name="contact" method="POST" action="/thank-you/" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={submit} aria-describedby="form-note" noValidate>
+  return <form className="contact-form" name="contact" method="POST" action="/thank-you/" data-netlify="true" data-netlify-honeypot="bot-field" onSubmit={submit} aria-describedby="form-note" ref={(form) => { if (form) form.noValidate = true; }}>
     <input type="hidden" name="form-name" value="contact"/>
     <div className="trap" aria-hidden="true"><label>Do not fill this out<input name="bot-field" tabIndex={-1} autoComplete="off"/></label></div>
     <fieldset className="service-choice"><legend>What do you need help with? <b aria-hidden="true">*</b></legend><div>{serviceOptions.map((option, index) => <label key={option}><input type="radio" name="service" value={option} defaultChecked={index === 0} required/><span>{option}</span></label>)}</div>{errors.service && <small className="field-error">{errors.service}</small>}</fieldset>
@@ -80,7 +83,7 @@ export function ContactForm() {
 }
 
 function Field({ label, name, type = 'text', autoComplete, placeholder, required = false, error }: { label: string; name: string; type?: string; autoComplete?: string; placeholder?: string; required?: boolean; error?: string }) {
-  return <label className="field"><span>{label} {required && <b aria-hidden="true">*</b>}</span><input name={name} type={type} autoComplete={autoComplete} placeholder={placeholder} required={required} maxLength={type === 'email' ? 254 : type === 'url' ? 300 : 120} aria-invalid={!!error} aria-describedby={error ? `${name}-error` : undefined}/>{error && <small className="field-error" id={`${name}-error`}>{error}</small>}</label>;
+  return <label className="field"><span>{label} {required && <b aria-hidden="true">*</b>}</span><input name={name} type={type === 'url' ? 'text' : type} inputMode={type === 'url' ? 'url' : undefined} autoComplete={autoComplete} placeholder={placeholder} required={required} maxLength={fieldLimits[name as keyof typeof fieldLimits]} aria-invalid={!!error} aria-describedby={error ? `${name}-error` : undefined}/>{error && <small className="field-error" id={`${name}-error`}>{error}</small>}</label>;
 }
 
 function SelectField({ label, name, options, error }: { label: string; name: string; options: string[]; error?: string }) {

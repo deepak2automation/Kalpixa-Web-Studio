@@ -30,9 +30,14 @@ export function FloatingWhatsApp() {
 
   function fit(next: Position): Position {
     const size = controlSize();
+    const viewport = window.visualViewport;
+    const left = viewport?.offsetLeft ?? 0;
+    const top = viewport?.offsetTop ?? 0;
+    const width = viewport?.width ?? window.innerWidth;
+    const height = viewport?.height ?? window.innerHeight;
     return {
-      x: clamp(next.x, edge, window.innerWidth - size - edge),
-      y: clamp(next.y, 84, window.innerHeight - size - edge),
+      x: clamp(next.x, left + Math.min(edge, Math.max(0, width - size)), left + width - size - edge),
+      y: clamp(next.y, top + Math.min(84, Math.max(0, height - size - edge)), top + height - size - edge),
     };
   }
 
@@ -40,7 +45,7 @@ export function FloatingWhatsApp() {
     const size = controlSize();
     const width = Math.max(1, window.innerWidth - size);
     const height = Math.max(1, window.innerHeight - size);
-    window.localStorage.setItem('kalpixa:whatsapp-position', JSON.stringify({ x: next.x / width, y: next.y / height }));
+    try { window.localStorage.setItem('kalpixa:whatsapp-position', JSON.stringify({ x: next.x / width, y: next.y / height })); } catch { /* Dragging must not depend on storage permission. */ }
   }
 
   useEffect(() => {
@@ -65,7 +70,8 @@ export function FloatingWhatsApp() {
     });
     window.addEventListener('resize', resize, { passive: true });
     window.visualViewport?.addEventListener('resize', resize, { passive: true });
-    return () => { window.cancelAnimationFrame(frame); window.removeEventListener('resize', resize); window.visualViewport?.removeEventListener('resize', resize); };
+    window.visualViewport?.addEventListener('scroll', resize, { passive: true });
+    return () => { window.cancelAnimationFrame(frame); window.removeEventListener('resize', resize); window.visualViewport?.removeEventListener('resize', resize); window.visualViewport?.removeEventListener('scroll', resize); };
   }, []);
 
   function updatePosition(next: Position) {
@@ -75,7 +81,7 @@ export function FloatingWhatsApp() {
   }
 
   function pointerDown(event: ReactPointerEvent<HTMLAnchorElement>) {
-    if (event.button !== 0) return;
+    if (event.button !== 0 || activePointer.current !== null) return;
     const current = positionRef.current ?? position ?? defaultPosition();
     start.current = { pointerX: event.clientX, pointerY: event.clientY, x: current.x, y: current.y };
     moved.current = false;
@@ -98,11 +104,12 @@ export function FloatingWhatsApp() {
     activePointer.current = null;
     setDragging(false);
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
-    if (positionRef.current) save(positionRef.current);
     suppressClick.current = moved.current;
+    if (positionRef.current) save(positionRef.current);
   }
 
   function keyboardMove(event: KeyboardEvent<HTMLAnchorElement>) {
+    suppressClick.current = false;
     const changes: Record<string, Position> = {
       ArrowLeft: { x: -18, y: 0 }, ArrowRight: { x: 18, y: 0 }, ArrowUp: { x: 0, y: -18 }, ArrowDown: { x: 0, y: 18 },
     };

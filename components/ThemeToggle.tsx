@@ -19,7 +19,7 @@ export function ThemeToggle() {
     const next: Theme = currentTheme() === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
     document.documentElement.style.colorScheme = next;
-    window.localStorage.setItem('kalpixa:theme', next);
+    try { window.localStorage.setItem('kalpixa:theme', next); } catch { /* Persistence is optional. */ }
     window.dispatchEvent(new Event('kalpixa:theme-change'));
   }
 
